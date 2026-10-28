@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 33% 98%;
+    --foreground: 330 35% 15%;
+
+    --card: 40 28% 100%;
+    --card-foreground: 330 35% 15%;
+
+    --popover: 40 28% 100%;
+    --popover-foreground: 330 35% 15%;
+
+    /* Deep Royal Maroon */
+    --primary: 345 78% 30%;
+    --primary-foreground: 40 33% 98%;
+
+    /* Soft Festive Cream/Tan */
+    --secondary: 38 40% 93%;
+    --secondary-foreground: 345 78% 30%;
+
+    --muted: 38 25% 93%;
+    --muted-foreground: 330 15% 45%;
+
+    /* Festive Saffron / Marigold */
+    --accent: 38 95% 50%;
+    --accent-foreground: 330 45% 15%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 38 25% 88%;
+    --input: 38 25% 88%;
+    --ring: 345 78% 30%;
+
+    --radius: 0.85rem;
+  }
+
+  .dark {
+    /* True Sleek Deep Dark Mode (Obsidian Midnight & Radiant Saffron Gold) */
+    --background: 222 47% 8%;       /* #0b0f19 - deep obsidian dark */
+    --foreground: 210 40% 98%;      /* #f8fafc - ultra clean crisp readable white */
+
+    --card: 222 40% 12%;            /* #111827 - elevated sleek midnight card */
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 40% 12%;
+    --popover-foreground: 210 40% 98%;
+
+    /* Vibrant celebration crimson in dark mode */
+    --primary: 345 82% 58%;         /* #f43f5e - vibrant celebratory ruby */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 222 35% 18%;       /* #1e293b - elevated slate */
+    --secondary-foreground: 210 40% 96%;
+
+    --muted: 222 30% 16%;
+    --muted-foreground: 215 20% 68%;
+
+    /* Radiant festive Marigold & Amber Gold Glow */
+    --accent: 38 96% 53%;           /* #f59e0b - festive golden saffron */
+    --accent-foreground: 222 47% 8%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 222 28% 22%;          /* crisp subtle border */
+    --input: 222 28% 20%;
+    --ring: 38 96% 53%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    @apply bg-background text-foreground;
+  }
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-accent/20 selection:text-primary min-h-screen;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* Custom celebratory gradient & Indian motif patterns without wiping out background-color */
+.bg-festive-gradient {
+  background-color: hsl(var(--background));
+  background-image: radial-gradient(circle at 12% 15%, rgba(245, 158, 11, 0.05) 0%, transparent 40%),
+                    radial-gradient(circle at 88% 85%, rgba(139, 30, 63, 0.05) 0%, transparent 40%);
+}
+
+.dark .bg-festive-gradient {
+  background-color: hsl(var(--background));
+  background-image: radial-gradient(circle at 12% 15%, rgba(245, 158, 11, 0.07) 0%, transparent 45%),
+                    radial-gradient(circle at 88% 85%, rgba(244, 63, 94, 0.07) 0%, transparent 45%);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Printable PDF stylesheet */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 10pt !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide navigation, buttons, chat drawers and interactive elements when printing */
+  nav, footer, .no-print, button, .chat-drawer, header, [role="dialog"] > div:first-child {
+    display: none !important;
+  }
+
+  .no-print-bg {
+    background: transparent !important;
+    padding: 0 !important;
+    position: static !important;
+  }
+
+  #printable-event-dossier {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .print-page-break, .print\\:break-before-page {
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+
+  .print-card, .print\\:break-inside-avoid {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}
