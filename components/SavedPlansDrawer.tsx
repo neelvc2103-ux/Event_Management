@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FolderOpen,
   X,
@@ -12,9 +12,13 @@ import {
   Copy,
   ChevronRight,
   Plus,
+  Share2,
+  Check,
+  Database,
 } from 'lucide-react';
 import { EventPlan } from '@/types';
 import { formatINR, formatDate } from '@/lib/formatters';
+import { encodePlanToShareToken } from '@/lib/shareUtils';
 
 interface SavedPlansDrawerProps {
   isOpen: boolean;
@@ -35,6 +39,8 @@ export function SavedPlansDrawer({
   onDeletePlan,
   onNewPlan,
 }: SavedPlansDrawerProps) {
+  const [copiedShareId, setCopiedShareId] = useState<string | null>(null);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
@@ -44,6 +50,21 @@ export function SavedPlansDrawer({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
+
+  const handleSharePlan = async (plan: EventPlan) => {
+    try {
+      const token = await encodePlanToShareToken(plan);
+      const origin = typeof window !== 'undefined' ? window.location.origin : '';
+      const shareUrl = `${origin}/?share=${token}`;
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(shareUrl);
+        setCopiedShareId(plan.id);
+        setTimeout(() => setCopiedShareId(null), 3000);
+      }
+    } catch (e) {
+      console.error('Failed to create share link:', e);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -175,22 +196,52 @@ export function SavedPlansDrawer({
                     </span>
                   </div>
 
-                  {/* Load Plan CTA */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onSelectPlan(plan);
-                      onClose();
-                    }}
-                    className="w-full mt-2 py-2 px-3 rounded-xl border border-border bg-card hover:bg-muted text-xs font-bold text-primary flex items-center justify-center gap-1.5 transition-colors"
-                  >
-                    <span>{isActive ? 'Viewing Active Plan' : 'Open This Plan'}</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
+                  {/* Load Plan & Share CTAs */}
+                  <div className="flex items-center gap-2 mt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onSelectPlan(plan);
+                        onClose();
+                      }}
+                      className="flex-1 py-2 px-3 rounded-xl border border-border bg-card hover:bg-muted text-xs font-bold text-primary flex items-center justify-center gap-1.5 transition-colors"
+                    >
+                      <span>{isActive ? 'Active Plan' : 'Open Plan'}</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleSharePlan(plan)}
+                      className="py-2 px-3 rounded-xl border border-border bg-card hover:bg-muted text-xs font-bold text-foreground flex items-center gap-1.5 transition-colors shadow-sm"
+                      title="Copy Private Client Share Link"
+                    >
+                      {copiedShareId === plan.id ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                          <span className="text-emerald-600 text-[11px]">Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Share2 className="w-3.5 h-3.5 text-muted-foreground" />
+                          <span className="text-[11px]">Share</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
               );
             })
           )}
+        </div>
+
+        {/* Cloud Sync Database Footer */}
+        <div className="p-3.5 bg-muted/40 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">
+          <div className="flex items-center gap-1.5">
+            <Database className="w-3.5 h-3.5 text-primary" />
+            <span>Supabase / Vercel Postgres Ready</span>
+          </div>
+          <span className="font-semibold text-foreground">Cloud Sync</span>
         </div>
       </div>
     </>

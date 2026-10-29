@@ -84,21 +84,32 @@ export function OperationsTab({ plan, onUpdatePlan, onOpenDigitalPass }: Operati
           </p>
         </div>
 
-        <div className="p-5 rounded-2xl border border-border bg-card shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Gate Access & Passes
+        <div className="p-5 rounded-2xl border-2 border-amber-500/40 bg-gradient-to-br from-card via-card to-amber-500/10 shadow-md flex flex-col justify-between space-y-3">
+          <div className="flex items-start justify-between">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-500/30">
+                Gate & Security Desk
+              </span>
+              <h4 className="text-lg font-black text-foreground mt-1 flex items-center gap-1.5">
+                <Ticket className="w-4 h-4 text-amber-500" />
+                <span>VIP Gate Pass & Access Badge</span>
+              </h4>
+              <p className="text-xs text-muted-foreground">Scannable QR credentials for family elders & guests</p>
+            </div>
+            <span className="text-xs font-mono font-bold text-amber-600 bg-amber-500/10 px-2 py-1 rounded-lg">
+              EC-{plan.id.slice(-6).toUpperCase()}
             </span>
-            <h4 className="text-xl font-black text-primary mt-1">Digital QR Pass</h4>
-            <p className="text-xs text-muted-foreground">VIP Family & Coordinator Access</p>
           </div>
-          <button
-            onClick={onOpenDigitalPass}
-            className="px-4 py-2 rounded-xl bg-accent text-accent-foreground font-bold text-xs shadow-md hover:bg-accent/90 transition-all flex items-center gap-1.5 hover:scale-105 active:scale-95"
-          >
-            <Ticket className="w-4 h-4" />
-            <span>Open Pass</span>
-          </button>
+
+          <div className="flex items-center gap-2 pt-1">
+            <button
+              onClick={onOpenDigitalPass}
+              className="flex-1 py-2 px-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-1.5 hover:scale-105 active:scale-95"
+            >
+              <Ticket className="w-3.5 h-3.5" />
+              <span>Preview VIP Badge</span>
+            </button>
+          </div>
         </div>
       </div>
 

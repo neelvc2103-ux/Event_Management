@@ -8,6 +8,8 @@ import { MultiStepForm } from '@/components/MultiStepForm';
 import { LoadingPlanState } from '@/components/LoadingPlanState';
 import { PlanDashboard } from '@/components/PlanDashboard';
 import { SavedPlansDrawer } from '@/components/SavedPlansDrawer';
+import { DigitalPassModal } from '@/components/DigitalPassModal';
+import { decodeShareTokenToPlan } from '@/lib/shareUtils';
 import { EventFormData, EventPlan } from '@/types';
 import {
   getAllPlans,
@@ -24,10 +26,12 @@ export default function Home() {
   const [activePlan, setActivePlan] = useState<EventPlan | null>(null);
   const [formPrefill, setFormPrefill] = useState<EventFormData | null>(null);
   const [isSavedDrawerOpen, setIsSavedDrawerOpen] = useState(false);
+  const [isGlobalPassOpen, setIsGlobalPassOpen] = useState(false);
+  const [sharedNotice, setSharedNotice] = useState<string | null>(null);
   const [darkMode, setDarkMode] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Initialize plans from localStorage on mount
+  // Initialize plans from localStorage on mount & check URL params (?share=, ?planId=, ?view=pass)
   useEffect(() => {
     const saved = getAllPlans();
     setPlans(saved);
@@ -35,6 +39,50 @@ export default function Home() {
     const active = getActivePlan();
     if (active) {
       setActivePlan(active);
+    }
+
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const shareToken = urlParams.get('share');
+      const planId = urlParams.get('planId');
+      const viewParam = urlParams.get('view');
+
+      if (viewParam === 'pass') {
+        setIsGlobalPassOpen(true);
+      }
+
+      if (shareToken) {
+        decodeShareTokenToPlan(shareToken).then((sharedPlan) => {
+          if (sharedPlan) {
+            savePlan(sharedPlan);
+            setActivePlan(sharedPlan);
+            setPlans(getAllPlans());
+            setView('plan');
+            setSharedNotice(`Loaded co-planner shared plan: "${sharedPlan.formData.eventName}"`);
+            triggerConfetti();
+          }
+        });
+      } else if (planId) {
+        const found = saved.find((p) => p.id === planId);
+        if (found) {
+          setActivePlan(found);
+          setView('plan');
+        } else {
+          fetch(`/api/share?id=${encodeURIComponent(planId)}`)
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.plan) {
+                savePlan(data.plan);
+                setActivePlan(data.plan);
+                setPlans(getAllPlans());
+                setView('plan');
+                setSharedNotice(`Loaded cloud plan: "${data.plan.formData.eventName}"`);
+                triggerConfetti();
+              }
+            })
+            .catch(() => {});
+        }
+      }
     }
 
     // Check dark mode
@@ -161,6 +209,7 @@ export default function Home() {
       <Navbar
         onOpenSavedPlans={() => setIsSavedDrawerOpen(true)}
         onNewPlan={handleStartPlanning}
+        onOpenVipPass={() => setIsGlobalPassOpen(true)}
         savedPlansCount={plans.length}
         darkMode={darkMode}
         onToggleDarkMode={toggleDarkMode}
@@ -168,6 +217,23 @@ export default function Home() {
 
       {/* Main Content Area */}
       <main className="flex-1">
+        {sharedNotice && (
+          <div className="max-w-4xl mx-auto mt-4 px-4">
+            <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-900 dark:text-emerald-200 text-xs sm:text-sm font-semibold flex items-center justify-between shadow-sm animate-fade-in">
+              <span className="flex items-center gap-2">
+                <span>✨</span>
+                <span>{sharedNotice}</span>
+              </span>
+              <button
+                onClick={() => setSharedNotice(null)}
+                className="font-bold underline text-xs ml-2 hover:opacity-80"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        )}
+
         {errorMessage && (
           <div className="max-w-3xl mx-auto mt-4 px-4">
             <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm flex items-center justify-between">
@@ -186,6 +252,7 @@ export default function Home() {
           <LandingHero
             onStartPlanning={handleStartPlanning}
             onSelectSample={handleSelectSample}
+            onOpenVipPass={() => setIsGlobalPassOpen(true)}
           />
         )}
 
@@ -248,6 +315,13 @@ export default function Home() {
           setIsSavedDrawerOpen(false);
           handleStartPlanning();
         }}
+      />
+
+      {/* Global VIP Pass & Badge Modal */}
+      <DigitalPassModal
+        plan={activePlan || createSamplePlan('gujarati_wedding')}
+        isOpen={isGlobalPassOpen}
+        onClose={() => setIsGlobalPassOpen(false)}
       />
     </div>
   );

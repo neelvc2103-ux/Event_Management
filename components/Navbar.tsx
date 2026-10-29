@@ -2,11 +2,12 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Sparkles, Calendar, Moon, Sun, FolderOpen, Plus } from 'lucide-react';
+import { Sparkles, Calendar, Moon, Sun, FolderOpen, Plus, Ticket } from 'lucide-react';
 
 interface NavbarProps {
   onOpenSavedPlans: () => void;
   onNewPlan: () => void;
+  onOpenVipPass?: () => void;
   savedPlansCount: number;
   darkMode: boolean;
   onToggleDarkMode: () => void;
@@ -15,6 +16,7 @@ interface NavbarProps {
 export function Navbar({
   onOpenSavedPlans,
   onNewPlan,
+  onOpenVipPass,
   savedPlansCount,
   darkMode,
   onToggleDarkMode,
@@ -44,6 +46,17 @@ export function Navbar({
 
         {/* Action Controls */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {onOpenVipPass && (
+            <button
+              onClick={onOpenVipPass}
+              className="flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-lg bg-gradient-to-r from-amber-500/15 to-accent/20 text-amber-900 dark:text-amber-200 border border-amber-500/30 hover:border-amber-500 transition-all shadow-sm active:scale-95"
+              title="View VIP Guest Pass & QR Badge"
+            >
+              <Ticket className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              <span>VIP Pass</span>
+            </button>
+          )}
+
           <button
             onClick={onNewPlan}
             className="hidden sm:flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors"

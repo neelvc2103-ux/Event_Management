@@ -28,9 +28,10 @@ import { CURATED_VISUALS } from '@/lib/visualAssets';
 interface LandingHeroProps {
   onStartPlanning: () => void;
   onSelectSample: (sampleKey: keyof typeof SAMPLE_INPUTS) => void;
+  onOpenVipPass?: () => void;
 }
 
-export function LandingHero({ onStartPlanning, onSelectSample }: LandingHeroProps) {
+export function LandingHero({ onStartPlanning, onSelectSample, onOpenVipPass }: LandingHeroProps) {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const faqs = [
@@ -90,6 +91,17 @@ export function LandingHero({ onStartPlanning, onSelectSample }: LandingHeroProp
             <span>Explore Royal Wedding Sample</span>
             <ChevronRight className="w-4 h-4 text-primary" />
           </button>
+
+          {onOpenVipPass && (
+            <button
+              onClick={onOpenVipPass}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl border-2 border-amber-500/40 bg-gradient-to-r from-amber-500/10 via-card to-accent/10 hover:border-amber-500 text-amber-900 dark:text-amber-200 text-sm font-bold shadow-md transition-all hover:scale-105 active:scale-95"
+              title="Preview Scannable VIP Family Pass & QR Badge"
+            >
+              <Ticket className="w-4 h-4 text-amber-500 animate-pulse" />
+              <span>🎟️ Preview VIP Pass & Badge</span>
+            </button>
+          )}
         </div>
 
         {/* Visual Editorial Photo Showcase Collage */}
@@ -202,12 +214,22 @@ export function LandingHero({ onStartPlanning, onSelectSample }: LandingHeroProp
             </p>
           </div>
 
-          <div className="p-6 rounded-3xl border border-border bg-card shadow-sm space-y-3 relative overflow-hidden">
-            <span className="text-3xl font-serif font-black text-accent/40 block">04/</span>
-            <h3 className="text-base font-bold text-foreground">Live Run-of-Show & Passes</h3>
+          <div
+            onClick={onOpenVipPass}
+            className="p-6 rounded-3xl border border-amber-500/40 bg-card hover:border-amber-500 hover:shadow-lg transition-all cursor-pointer space-y-3 relative overflow-hidden group"
+            title="Click to preview the live VIP Pass & Badge"
+          >
+            <span className="text-3xl font-serif font-black text-amber-500/40 block">04/</span>
+            <h3 className="text-base font-bold text-foreground flex items-center justify-between">
+              <span>Live Run-of-Show & Passes</span>
+              <Ticket className="w-4 h-4 text-amber-500 group-hover:scale-110 transition-transform" />
+            </h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
               Hour-by-hour operational coordination, digital VIP passes with gate QR codes, and day-of family survival kits.
             </p>
+            <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1 group-hover:underline pt-1">
+              Click to preview live VIP pass & badge →
+            </span>
           </div>
         </div>
       </div>

@@ -34,6 +34,8 @@ import { OperationsTab } from './tabs/OperationsTab';
 import { ChatDrawer } from './ChatDrawer';
 import { PdfDossierModal } from './PdfDossierModal';
 import { DigitalPassModal } from './DigitalPassModal';
+import { EditorialPdfExportModal } from './EditorialPdfExportModal';
+import { WhatsAppRsvpDispatcher } from './WhatsAppRsvpDispatcher';
 import { CURATED_VISUALS } from '@/lib/visualAssets';
 
 interface PlanDashboardProps {
@@ -48,6 +50,8 @@ export function PlanDashboard({ plan, onUpdatePlan, onEditForm }: PlanDashboardP
   const [showFullSummary, setShowFullSummary] = useState(false);
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const [isPassModalOpen, setIsPassModalOpen] = useState(false);
+  const [isElderPdfOpen, setIsElderPdfOpen] = useState(false);
+  const [isWaDispatcherOpen, setIsWaDispatcherOpen] = useState(false);
 
   const countdown = React.useMemo(() => getDaysRemaining(plan.formData.eventDate), [plan.formData.eventDate]);
 
@@ -230,39 +234,30 @@ export function PlanDashboard({ plan, onUpdatePlan, onEditForm }: PlanDashboardP
             <div className="flex flex-wrap items-center gap-2 no-print">
               <button
                 onClick={() => setIsPassModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-accent text-accent-foreground text-xs font-bold shadow-md hover:bg-accent/90 transition-all hover:scale-105 active:scale-95"
-                title="Generate VIP Family Pass & QR"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-accent to-amber-600 text-amber-950 text-xs font-black shadow-lg shadow-amber-500/20 hover:brightness-110 transition-all hover:scale-105 active:scale-95 border border-amber-400"
+                title="View Scannable VIP Family Pass & QR Badge"
               >
-                <Ticket className="w-4 h-4" />
-                <span>Digital Pass & QR</span>
+                <Ticket className="w-4 h-4 text-amber-950 animate-pulse" />
+                <span>🎟️ VIP Pass & Badge</span>
               </button>
 
               <button
-                onClick={handleShareWhatsApp}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-border bg-card hover:bg-muted text-xs font-bold text-foreground transition-all hover:scale-105 active:scale-95 shadow-sm"
-                title="Share WhatsApp Summary with Family"
+                onClick={() => setIsWaDispatcherOpen(true)}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-xs font-bold text-emerald-800 dark:text-emerald-300 transition-all hover:scale-105 active:scale-95 shadow-sm"
+                title="Launch Interactive WhatsApp RSVP & Pass Dispatcher"
               >
-                {copiedShare ? (
-                  <>
-                    <Check className="w-4 h-4 text-emerald-600" />
-                    <span className="text-emerald-600 font-bold">Copied & Opening WhatsApp</span>
-                  </>
-                ) : (
-                  <>
-                    <Share2 className="w-4 h-4 text-emerald-600" />
-                    <span>Share with Family</span>
-                  </>
-                )}
+                <Share2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span>💬 WhatsApp RSVP & Passes</span>
               </button>
 
               <button
-                id="export-pdf-dossier-btn"
-                onClick={handleExportPDF}
+                id="export-editorial-pdf-btn"
+                onClick={() => setIsElderPdfOpen(true)}
                 className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-bold shadow-md hover:bg-primary/90 transition-all hover:scale-105 active:scale-95"
-                title="Open Printable Master Dossier"
+                title="One-Click PDF/Print Summary for Venue Managers & Family Elders"
               >
                 <Printer className="w-4 h-4 text-accent" />
-                <span>Print Master Plan</span>
+                <span>📄 One-Click Editorial PDF</span>
               </button>
 
               <button
@@ -544,6 +539,24 @@ export function PlanDashboard({ plan, onUpdatePlan, onEditForm }: PlanDashboardP
               }}
             />
           </div>
+          <div className="pt-2 border-t border-border flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => setIsPassModalOpen(true)}
+              className="text-[11px] font-bold text-amber-700 dark:text-amber-400 hover:underline flex items-center gap-1"
+            >
+              <Ticket className="w-3 h-3" />
+              <span>Issue VIP Passes</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsWaDispatcherOpen(true)}
+              className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1"
+            >
+              <Share2 className="w-3 h-3" />
+              <span>WhatsApp RSVP</span>
+            </button>
+          </div>
         </div>
 
         {/* 4. Vendor Procurement Pipeline KPI */}
@@ -795,6 +808,24 @@ export function PlanDashboard({ plan, onUpdatePlan, onEditForm }: PlanDashboardP
         plan={plan}
         isOpen={isPassModalOpen}
         onClose={() => setIsPassModalOpen(false)}
+      />
+
+      {/* Editorial PDF Handout for Family Elders & Venue Operations */}
+      <EditorialPdfExportModal
+        plan={plan}
+        isOpen={isElderPdfOpen}
+        onClose={() => setIsElderPdfOpen(false)}
+      />
+
+      {/* Interactive WhatsApp RSVP & Pass Dispatcher */}
+      <WhatsAppRsvpDispatcher
+        plan={plan}
+        isOpen={isWaDispatcherOpen}
+        onClose={() => setIsWaDispatcherOpen(false)}
+        onOpenPassModal={() => {
+          setIsWaDispatcherOpen(false);
+          setIsPassModalOpen(true);
+        }}
       />
     </div>
   );
