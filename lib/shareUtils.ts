@@ -141,3 +141,4 @@ export function generateWhatsAppInviteCopy({
   const waLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
   return { text: message, waLink };
 }
+

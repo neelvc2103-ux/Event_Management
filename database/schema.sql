@@ -35,3 +35,4 @@ CREATE POLICY "Allow public insert of plans"
 CREATE POLICY "Allow public update of plans"
   ON event_plans FOR UPDATE
   USING (true);
+

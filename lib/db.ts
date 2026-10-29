@@ -97,3 +97,4 @@ export async function fetchPlanFromCloud(id: string): Promise<EventPlan | null> 
   }
   return null;
 }
+
