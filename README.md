@@ -229,3 +229,5 @@ Runs the Vitest test suite for budget math rebalancing and backward timeline dat
    - Dates calculated backward from the event date are clamped against `new Date()`. When the remaining window is compressed, tasks are redistributed smoothly so the user never receives a task due yesterday.
 4. **Resilient User Experience**:
    - 1-click sample templates enable users to test and inspect the full dashboard in under 60 seconds without having to type form data manually or wait for cold starts.
+#   E v e n t _ M a n a g e m e n t  
+ 
