@@ -79,6 +79,8 @@ export function createSamplePlan(sampleKey: keyof typeof SAMPLE_INPUTS): EventPl
     venueDetails: generated.venueDetails,
     muhuratDetails: generated.muhuratDetails,
     civicCompliance: generated.civicCompliance,
+    runOfShow: generated.runOfShow,
+    guestStats: generated.guestStats,
   };
 }
 

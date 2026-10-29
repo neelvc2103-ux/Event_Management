@@ -37,6 +37,9 @@ export interface RealVenueDetails {
   rating: number;
   highlights: string[];
   mapsQuery: string;
+  imageUrl?: string;
+  distanceInfo?: string;
+  parkingSpots?: number;
 }
 
 export interface EventFormData {
@@ -101,11 +104,46 @@ export interface VendorItem {
   reviewCount?: number;
   verifiedBadge?: string;
   specialty?: string;
+  imageUrl?: string;
+  paymentMilestones?: {
+    advanceToken: number;
+    midWay: number;
+    finalSettlement: number;
+    advancePaid?: boolean;
+    midWayPaid?: boolean;
+    finalPaid?: boolean;
+  };
 }
 
 export interface IdeaTheme {
   name: string;
   description: string;
+  imageUrl?: string;
+  palette?: string[];
+}
+
+export interface RunOfShowItem {
+  id: string;
+  time: string;
+  eventTitle: string;
+  description: string;
+  location: string;
+  coordinator: string;
+  phone?: string;
+  completed?: boolean;
+  urgentNote?: string;
+}
+
+export interface GuestStats {
+  totalExpected: number;
+  confirmed: number;
+  pending: number;
+  dietary: {
+    jain: number;
+    pureVeg: number;
+    regular: number;
+  };
+  vipCount: number;
 }
 
 export interface IdeasData {
@@ -139,6 +177,8 @@ export interface LLMPlanOutput {
   venueDetails?: RealVenueDetails;
   muhuratDetails?: MuhuratDetails;
   civicCompliance?: CivicComplianceDetails;
+  runOfShow?: RunOfShowItem[];
+  guestStats?: GuestStats;
 }
 
 export interface EventPlan {
@@ -154,6 +194,8 @@ export interface EventPlan {
   venueDetails?: RealVenueDetails;
   muhuratDetails?: MuhuratDetails;
   civicCompliance?: CivicComplianceDetails;
+  runOfShow?: RunOfShowItem[];
+  guestStats?: GuestStats;
 }
 
 export type IdeaSectionKey = 'themes' | 'decor' | 'menu' | 'entertainment' | 'giftsAndFavors';

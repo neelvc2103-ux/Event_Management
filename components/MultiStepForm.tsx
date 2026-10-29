@@ -19,6 +19,7 @@ import {
 import { EventFormData, EventType, VenueType, BirthdayCategory } from '@/types';
 import { formatINR } from '@/lib/formatters';
 import { getRealCityData } from '@/lib/realIndiaDatabase';
+import { CURATED_VISUALS } from '@/lib/visualAssets';
 
 interface MultiStepFormProps {
   initialData?: EventFormData | null;
@@ -217,14 +218,14 @@ export function MultiStepForm({ initialData, onSubmit, onCancel }: MultiStepForm
               </p>
             </div>
 
-            {/* Event Type Grid */}
-            <div role="radiogroup" aria-label="Select Event Type" className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {/* Event Type Grid with Rich Imagery */}
+            <div role="radiogroup" aria-label="Select Event Type" className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
               {[
-                { type: 'wedding', label: 'Wedding', icon: Heart },
-                { type: 'birthday', label: 'Birthday', icon: Cake },
-                { type: 'community', label: 'Community Fest', icon: Building2 },
-                { type: 'other', label: 'Other Event', icon: Sparkles },
-              ].map(({ type, label, icon: Icon }) => {
+                { type: 'wedding', label: 'Wedding & Sangeet', icon: Heart, image: CURATED_VISUALS.venues.wedding_palace, badge: 'Lagna & Muhurat' },
+                { type: 'birthday', label: 'Birthday Celebration', icon: Cake, image: CURATED_VISUALS.themes.jungle, badge: 'Themes & Cake' },
+                { type: 'community', label: 'Community Festival', icon: Building2, image: CURATED_VISUALS.venues.festival_ground, badge: 'Pandal & Aarti' },
+                { type: 'other', label: 'Other Social Gathering', icon: Sparkles, image: CURATED_VISUALS.venues.banquet_hall, badge: 'Custom Event' },
+              ].map(({ type, label, icon: Icon, image, badge }) => {
                 const isSelected = formData.eventType === type;
                 return (
                   <button
@@ -233,14 +234,28 @@ export function MultiStepForm({ initialData, onSubmit, onCancel }: MultiStepForm
                     aria-checked={isSelected}
                     key={type}
                     onClick={() => updateField('eventType', type as EventType)}
-                    className={`p-4 rounded-xl border flex flex-col items-center justify-center gap-2 text-center transition-all ${
+                    className={`rounded-2xl border text-left overflow-hidden transition-all group flex flex-col justify-between ${
                       isSelected
-                        ? 'border-primary bg-primary/10 text-primary ring-2 ring-primary/20 shadow-sm font-bold'
-                        : 'border-border bg-card hover:bg-muted text-foreground'
+                        ? 'border-primary ring-2 ring-primary/40 shadow-md scale-[1.02] bg-primary/[0.03]'
+                        : 'border-border bg-card hover:border-primary/40'
                     }`}
                   >
-                    <Icon className={`w-6 h-6 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} />
-                    <span className="text-xs sm:text-sm">{label}</span>
+                    <div className="relative h-20 w-full overflow-hidden bg-muted">
+                      <img
+                        src={image}
+                        alt={label}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                      <span className="absolute top-2 left-2 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-black/60 text-white backdrop-blur-sm">
+                        {badge}
+                      </span>
+                    </div>
+                    <div className="p-3 flex items-center gap-2">
+                      <Icon className={`w-4 h-4 shrink-0 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} />
+                      <span className="text-xs font-bold text-foreground leading-tight">{label}</span>
+                    </div>
                   </button>
                 );
               })}

@@ -2,6 +2,13 @@ import { EventFormData, LLMPlanOutput, VendorItem } from '@/types';
 import { recomputeAmounts } from './budgetMath';
 import { calculateTimelineDates } from './dateUtils';
 import { getRealCityData, RealVenue, RealVendor } from './realIndiaDatabase';
+import {
+  CURATED_VISUALS,
+  getVendorImage,
+  calculateVendorPaymentMilestones,
+  generateRunOfShow,
+  generateGuestStats,
+} from './visualAssets';
 
 /**
  * Intelligent India-first generator that synthesizes hyper-realistic event plans
@@ -50,6 +57,27 @@ export function generateMockEventPlan(formData: EventFormData): LLMPlanOutput {
     const matched = cityData.venues.find((v) => v.locality.toLowerCase().includes(locality.toLowerCase()));
     if (matched) selectedVenue = matched;
   }
+
+  const venueImageUrl = eventType === 'wedding'
+    ? (totalBudget >= 2000000 ? CURATED_VISUALS.venues.wedding_palace : CURATED_VISUALS.venues.wedding_resort)
+    : eventType === 'birthday'
+    ? CURATED_VISUALS.venues.birthday_lawn
+    : eventType === 'community'
+    ? CURATED_VISUALS.venues.festival_ground
+    : CURATED_VISUALS.venues.banquet_hall;
+
+  const enrichedVenue = {
+    ...selectedVenue,
+    imageUrl: venueImageUrl,
+    distanceInfo: `Prime locality in ${selectedVenue.locality} • ~6.5 km from central junction`,
+    parkingSpots: guestCount >= 300 ? 150 : 60,
+  };
+
+  const enrichVendor = (v: VendorItem): VendorItem => ({
+    ...v,
+    imageUrl: v.imageUrl || getVendorImage(v.category),
+    paymentMilestones: v.paymentMilestones || calculateVendorPaymentMilestones(v.estimatedCost),
+  });
 
   // Civic & Statutory Compliance info
   const civicCompliance = {
@@ -232,15 +260,30 @@ export function generateMockEventPlan(formData: EventFormData): LLMPlanOutput {
         savingTips,
       },
       timeline,
-      vendors,
+      vendors: vendors.map(enrichVendor),
       ideas: {
         themes: [
-          { name: `Royal ${cityData.state} Heritage`, description: `Deep crimson velvet, brass urli with marigold petals from ${cityData.flowerMarketName}, jharokha photobooths, and warm lantern lighting.` },
-          { name: 'Pastel Vrindavan Bloom', description: 'Soft blush pink, ivory mogra garlands, mint green drapes, and fragrant rajnigandha accents.' },
-          { name: 'Boho Sunset Mela', description: 'Vibrant bandhani and leheriya umbrellas, colorful earthen matkas, fairy-lit cabanas for Mehendi & Sangeet.' },
+          {
+            name: `Royal ${cityData.state} Heritage`,
+            description: `Deep crimson velvet, brass urli with marigold petals from ${cityData.flowerMarketName}, jharokha photobooths, and warm lantern lighting.`,
+            imageUrl: CURATED_VISUALS.themes.royal,
+            palette: ['#8B1E3F', '#F59E0B', '#D4AF37', '#FAF8F5'],
+          },
+          {
+            name: 'Pastel Vrindavan Bloom',
+            description: 'Soft blush pink, ivory mogra garlands, mint green drapes, and fragrant rajnigandha accents.',
+            imageUrl: CURATED_VISUALS.themes.pastel,
+            palette: ['#FCE7F3', '#F3E8FF', '#D1FAE5', '#FDF4FF'],
+          },
+          {
+            name: 'Boho Sunset Mela',
+            description: 'Vibrant bandhani and leheriya umbrellas, colorful earthen matkas, fairy-lit cabanas for Mehendi & Sangeet.',
+            imageUrl: CURATED_VISUALS.themes.boho,
+            palette: ['#E2725B', '#F59E0B', '#F43F5E', '#FEF3C7'],
+          },
         ],
         decor: [
-          `Grand entryway at ${selectedVenue.name} lined with brass diyas, scented marigold carpets, and floral bells`,
+          `Grand entryway at ${enrichedVenue.name} lined with brass diyas, scented marigold carpets, and floral bells`,
           `Carved wooden Mandap wrapped in fresh orange & yellow marigolds sourced from ${cityData.flowerMarketName}`,
           'Interactive photo backdrop featuring personalized neon signage and vintage brass swings (jhula)',
           'Cozy floor seating with low chowkis and silk bolsters for elder relatives during Haldi & Mehendi',
@@ -252,7 +295,7 @@ export function generateMockEventPlan(formData: EventFormData): LLMPlanOutput {
           `Welcome Beverage Station: ${cityData.regionalSpecialties.drinks.join(', ')}`,
         ],
         entertainment: [
-          `High-energy Live Dhol Tasha troupe leading the groom baraat to ${selectedVenue.name}`,
+          `High-energy Live Dhol Tasha troupe leading the groom baraat to ${enrichedVenue.name}`,
           'Professional Sangeet DJ with wireless mic setup and customized family dance song mashups',
           'Live folk singers during the wedding feast and pheras ceremony',
           'Instant polaroid photo station with personalized bride & groom custom magnetic frames',
@@ -264,9 +307,11 @@ export function generateMockEventPlan(formData: EventFormData): LLMPlanOutput {
           'Eco-friendly seed-paper thank you notes that bloom into marigold flowers when planted',
         ],
       },
-      venueDetails: selectedVenue,
+      venueDetails: enrichedVenue,
       muhuratDetails,
       civicCompliance,
+      runOfShow: generateRunOfShow(formData, enrichedVenue.name, city),
+      guestStats: generateGuestStats(guestCount, eventType),
     };
   }
 
@@ -386,21 +431,46 @@ export function generateMockEventPlan(formData: EventFormData): LLMPlanOutput {
         savingTips,
       },
       timeline,
-      vendors,
+      vendors: vendors.map(enrichVendor),
       ideas: {
         themes: isKids
           ? [
-              { name: 'Enchanted Jungle Safari', description: 'Emerald greenery, animal cutouts, safari hats for kids, and lion-cub balloon arch.' },
-              { name: 'Cosmic Galaxy & Astronauts', description: 'Deep navy, glowing neon stars, metallic silver balloons, and rocket ship photo cutouts.' },
-              { name: 'Carnival Fiesta', description: 'Candy-striped red & white booths, popcorn cart, cotton candy machine, and funfair ring toss.' },
+              {
+                name: 'Enchanted Jungle Safari',
+                description: 'Emerald greenery, animal cutouts, safari hats for kids, and lion-cub balloon arch.',
+                imageUrl: CURATED_VISUALS.themes.jungle,
+                palette: ['#065F46', '#F59E0B', '#D97706', '#FEF3C7'],
+              },
+              {
+                name: 'Cosmic Galaxy & Astronauts',
+                description: 'Deep navy, glowing neon stars, metallic silver balloons, and rocket ship photo cutouts.',
+                imageUrl: CURATED_VISUALS.themes.carnival,
+                palette: ['#1E1B4B', '#6366F1', '#38BDF8', '#F1F5F9'],
+              },
+              {
+                name: 'Carnival Fiesta',
+                description: 'Candy-striped red & white booths, popcorn cart, cotton candy machine, and funfair ring toss.',
+                imageUrl: CURATED_VISUALS.themes.carnival,
+                palette: ['#DC2626', '#FBBF24', '#3B82F6', '#FFFFFF'],
+              },
             ]
           : [
-              { name: 'Gilded Retro Glamour', description: 'Warm amber lighting, metallic gold balloons, vinyl record centerpieces, and classic throwback hits.' },
-              { name: 'Tropical Sundowner', description: 'Bamboo cabanas, fairy lights, floral mocktail garnishes, and acoustic live unplugged music.' },
+              {
+                name: 'Gilded Retro Glamour',
+                description: 'Warm amber lighting, metallic gold balloons, vinyl record centerpieces, and classic throwback hits.',
+                imageUrl: CURATED_VISUALS.themes.royal,
+                palette: ['#78350F', '#D97706', '#FCD34D', '#FFFBEB'],
+              },
+              {
+                name: 'Tropical Sundowner',
+                description: 'Bamboo cabanas, fairy lights, floral mocktail garnishes, and acoustic live unplugged music.',
+                imageUrl: CURATED_VISUALS.themes.boho,
+                palette: ['#047857', '#F97316', '#FDE047', '#ECFDF5'],
+              },
             ],
         decor: isKids
           ? [
-              `Custom backdrop arch at ${selectedVenue.name} with 3D balloon installation and marquee age numbers`,
+              `Custom backdrop arch at ${enrichedVenue.name} with 3D balloon installation and marquee age numbers`,
               'Themed table runner with personalized placemats and animal/superhero cups',
               'Fun photo booth corner with quirky goggles, speech bubbles, and superhero capes',
             ]
@@ -443,8 +513,10 @@ export function generateMockEventPlan(formData: EventFormData): LLMPlanOutput {
               'Gourmet box of handcrafted truffles and spiced roasted dry fruits',
             ],
       },
-      venueDetails: selectedVenue,
+      venueDetails: enrichedVenue,
       civicCompliance,
+      runOfShow: generateRunOfShow(formData, enrichedVenue.name, city),
+      guestStats: generateGuestStats(guestCount, eventType),
     };
   }
 
@@ -568,21 +640,31 @@ export function generateMockEventPlan(formData: EventFormData): LLMPlanOutput {
   ];
 
   return {
-    summary: `Jai Ho! 🪔 "${eventName}" is all set to bring together ${guestCount} people at ${selectedVenue.name} (${selectedVenue.locality}, ${city}) for an unforgettable community celebration! Every single rupee of your ₹${totalBudget.toLocaleString('en-IN')} fund is smartly accounted for — from legal police/sound permissions to delicious Mahaprasad feasts and grand decor. 🙏`,
+    summary: `Jai Ho! 🪔 "${eventName}" is all set to bring together ${guestCount} people at ${enrichedVenue.name} (${enrichedVenue.locality}, ${city}) for an unforgettable community celebration! Every single rupee of your ₹${totalBudget.toLocaleString('en-IN')} fund is smartly accounted for — from legal police/sound permissions to delicious Mahaprasad feasts and grand decor. 🙏`,
     budget: {
       total: totalBudget,
       categories: budgetCategories,
       savingTips,
     },
     timeline,
-    vendors,
+    vendors: vendors.map(enrichVendor),
     ideas: {
       themes: [
-        { name: 'Vedic Heritage & Earthen Harmony', description: 'Terracotta diyas, bamboo arches, sacred marigold torans, and zero-plastic eco decorations.' },
-        { name: 'Temple of Lights (Deepotsav)', description: `Cascading warm fairy lighting, brass samai oil lamps, and floral rangolis crafted with blooms from ${cityData.flowerMarketName}.` },
+        {
+          name: 'Vedic Heritage & Earthen Harmony',
+          description: 'Terracotta diyas, bamboo arches, sacred marigold torans, and zero-plastic eco decorations.',
+          imageUrl: CURATED_VISUALS.themes.temple,
+          palette: ['#B45309', '#D97706', '#065F46', '#FEF3C7'],
+        },
+        {
+          name: 'Temple of Lights (Deepotsav)',
+          description: `Cascading warm fairy lighting, brass samai oil lamps, and floral rangolis crafted with blooms from ${cityData.flowerMarketName}.`,
+          imageUrl: CURATED_VISUALS.themes.royal,
+          palette: ['#F59E0B', '#D4AF37', '#78350F', '#FFFBEB'],
+        },
       ],
       decor: [
-        `Grand entrance gate modeled after traditional temple gopurams decorated with banana stems and mango leaves at ${selectedVenue.name}`,
+        `Grand entrance gate modeled after traditional temple gopurams decorated with banana stems and mango leaves at ${enrichedVenue.name}`,
         'Magnificent floral rangoli competition designs welcoming visitors at the central foyer',
         'LED focus illumination on the central altar with soft ambient warm wash across the stage',
       ],
@@ -601,7 +683,9 @@ export function generateMockEventPlan(formData: EventFormData): LLMPlanOutput {
         'Jute eco-pouches filled with sacred prasad, dry fruit mishri, and blessed tulsi seeds',
       ],
     },
-    venueDetails: selectedVenue,
+    venueDetails: enrichedVenue,
     civicCompliance,
+    runOfShow: generateRunOfShow(formData, enrichedVenue.name, city),
+    guestStats: generateGuestStats(guestCount, eventType),
   };
 }

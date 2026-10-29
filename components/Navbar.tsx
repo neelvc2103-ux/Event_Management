@@ -32,11 +32,11 @@ export function Navbar({
               <Sparkles className="w-5 h-5 text-accent animate-pulse" />
             </div>
             <div>
-              <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-primary to-maroon-700 dark:from-maroon-400 dark:to-accent bg-clip-text text-transparent">
+              <span className="text-xl font-serif font-black tracking-tight bg-gradient-to-r from-primary via-maroon-700 to-accent dark:from-maroon-400 dark:to-accent bg-clip-text text-transparent">
                 EventCraft
               </span>
-              <span className="hidden sm:inline-block ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-accent/20 text-accent-foreground border border-accent/30">
-                India Edition
+              <span className="hidden sm:inline-block ml-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-accent/20 text-accent-foreground border border-accent/30">
+                Command Center
               </span>
             </div>
           </div>

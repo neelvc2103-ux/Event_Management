@@ -79,6 +79,8 @@ export async function POST(req: NextRequest) {
       venueDetails: generatedPlan.venueDetails,
       muhuratDetails: generatedPlan.muhuratDetails,
       civicCompliance: generatedPlan.civicCompliance,
+      runOfShow: generatedPlan.runOfShow,
+      guestStats: generatedPlan.guestStats,
     };
 
     return NextResponse.json(finalPlan, { status: 200 });

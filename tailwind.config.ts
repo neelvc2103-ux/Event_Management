@@ -75,6 +75,10 @@ const config: Config = {
           cream: "#FAF8F5",
         }
       },
+      fontFamily: {
+        sans: ["var(--font-outfit)", "var(--font-inter)", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
+        serif: ["var(--font-serif)", "Playfair Display", "Georgia", "serif"],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

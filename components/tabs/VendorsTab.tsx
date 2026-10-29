@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Store,
   CheckCircle2,
@@ -22,9 +22,16 @@ import {
   Scroll,
   Shield,
   MapPin,
+  Phone,
+  MessageCircle,
+  Search,
+  Filter,
+  CreditCard,
+  CheckSquare,
 } from 'lucide-react';
 import { VendorItem } from '@/types';
 import { formatINR, formatDate } from '@/lib/formatters';
+import { getVendorImage, calculateVendorPaymentMilestones } from '@/lib/visualAssets';
 
 interface VendorsTabProps {
   vendors: VendorItem[];
@@ -68,10 +75,13 @@ function getCategoryIcon(category: string) {
 
 export function VendorsTab({ vendors, onUpdateVendor }: VendorsTabProps) {
   const [openQuestionsIndex, setOpenQuestionsIndex] = useState<number | null>(null);
+  const [openChecklistIndex, setOpenChecklistIndex] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState<string>('all');
 
-  const totalEstimated = React.useMemo(() => vendors.reduce((acc, v) => acc + (v.estimatedCost || 0), 0), [vendors]);
-  const totalActual = React.useMemo(() => vendors.reduce((acc, v) => acc + (v.actualCost || 0), 0), [vendors]);
-  const bookedCount = React.useMemo(() => vendors.filter((v) => v.isBooked).length, [vendors]);
+  const totalEstimated = useMemo(() => vendors.reduce((acc, v) => acc + (v.estimatedCost || 0), 0), [vendors]);
+  const totalActual = useMemo(() => vendors.reduce((acc, v) => acc + (v.actualCost || 0), 0), [vendors]);
+  const bookedCount = useMemo(() => vendors.filter((v) => v.isBooked).length, [vendors]);
 
   const toggleBooked = (index: number) => {
     const target = vendors[index];
@@ -89,262 +99,416 @@ export function VendorsTab({ vendors, onUpdateVendor }: VendorsTabProps) {
     });
   };
 
+  const toggleMilestone = (vendorIndex: number, tranche: 'advancePaid' | 'midWayPaid' | 'finalPaid') => {
+    const target = vendors[vendorIndex];
+    const currentMilestones = target.paymentMilestones || calculateVendorPaymentMilestones(target.estimatedCost);
+    const updated = {
+      ...target,
+      paymentMilestones: {
+        ...currentMilestones,
+        [tranche]: !currentMilestones[tranche],
+      },
+    };
+    onUpdateVendor(vendorIndex, updated);
+  };
+
+  // Filter vendors by category or booked status
+  const filteredVendors = useMemo(() => {
+    return vendors.filter((v) => {
+      const matchesSearch =
+        searchQuery === '' ||
+        (v.vendorName && v.vendorName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        v.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (v.specialty && v.specialty.toLowerCase().includes(searchQuery.toLowerCase()));
+
+      if (!matchesSearch) return false;
+
+      if (selectedFilter === 'all') return true;
+      if (selectedFilter === 'booked') return v.isBooked;
+      if (selectedFilter === 'pending') return !v.isBooked;
+      return v.category.toLowerCase().includes(selectedFilter.toLowerCase());
+    });
+  }, [vendors, searchQuery, selectedFilter]);
+
   return (
     <div className="space-y-8 animate-fade-in">
-      {/* Top Vendor Spend Summary */}
+      {/* Top Vendor Spend KPI Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="p-5 rounded-2xl border border-border bg-card shadow-sm">
           <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Total Estimated Cost
+            Total Estimated Budget
           </span>
-          <h4 className="text-xl font-black text-foreground mt-1">
+          <h4 className="text-2xl font-black text-foreground mt-1">
             {formatINR(totalEstimated)}
           </h4>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Across {vendors.length} vendor categories
+            Across {vendors.length} specialized vendor categories
           </p>
         </div>
 
         <div className="p-5 rounded-2xl border border-border bg-card shadow-sm">
           <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Total Actual Spend
+            Committed Actual Spend
           </span>
-          <h4 className={`text-xl font-black mt-1 ${totalActual > totalEstimated ? 'text-destructive' : 'text-primary'}`}>
+          <h4
+            className={`text-2xl font-black mt-1 ${
+              totalActual > totalEstimated ? 'text-destructive' : 'text-primary'
+            }`}
+          >
             {formatINR(totalActual)}
           </h4>
           <p className="text-xs text-muted-foreground mt-0.5">
             {totalActual === 0
-              ? 'Enter actual costs below to track spend'
+              ? 'Enter actual contract amounts below'
               : totalActual <= totalEstimated
-              ? `₹${(totalEstimated - totalActual).toLocaleString('en-IN')} within estimate`
-              : `₹${(totalActual - totalEstimated).toLocaleString('en-IN')} over estimate`}
+              ? `₹${(totalEstimated - totalActual).toLocaleString('en-IN')} remaining in buffer`
+              : `₹${(totalActual - totalEstimated).toLocaleString('en-IN')} over initial estimate`}
           </p>
         </div>
 
         <div className="p-5 rounded-2xl border border-border bg-card shadow-sm">
           <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Contract Status
+            Contract Lock Status
           </span>
-          <h4 className="text-xl font-black text-accent-foreground mt-1">
-            {bookedCount} / {vendors.length} Booked
+          <h4 className="text-2xl font-black text-accent-foreground mt-1">
+            {bookedCount} of {vendors.length} Locked
           </h4>
           <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden mt-2">
             <div
-              className="h-full bg-accent transition-all duration-300"
+              className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-300"
               style={{ width: `${(bookedCount / Math.max(1, vendors.length)) * 100}%` }}
             />
           </div>
         </div>
       </div>
 
-      {/* Vendor Cards Grid */}
+      {/* MeetCraft Search & Filter Bar */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-card border border-border p-3.5 rounded-2xl shadow-sm">
+        {/* Search Input */}
+        <div className="relative flex-1">
+          <Search className="w-4 h-4 text-muted-foreground absolute left-3.5 top-3" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search vendor by name, category, or specialty..."
+            className="w-full pl-9 pr-4 py-2 rounded-xl border border-input bg-background text-xs sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
+
+        {/* Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+          {[
+            { id: 'all', label: 'All Vendors' },
+            { id: 'booked', label: `Locked (${bookedCount})` },
+            { id: 'pending', label: `Pending (${vendors.length - bookedCount})` },
+            { id: 'cater', label: 'Catering' },
+            { id: 'decor', label: 'Decor' },
+            { id: 'photo', label: 'Photo' },
+          ].map((f) => (
+            <button
+              key={f.id}
+              onClick={() => setSelectedFilter(f.id)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-colors ${
+                selectedFilter === f.id
+                  ? 'bg-primary text-white shadow-sm'
+                  : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Vendor Cards Grid with Visual Photos */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {vendors.map((vendor, index) => {
+        {filteredVendors.map((vendor, filteredIdx) => {
+          // Find original index
+          const originalIndex = vendors.indexOf(vendor);
+          const index = originalIndex !== -1 ? originalIndex : filteredIdx;
+
           const Icon = getCategoryIcon(vendor.category);
           const isQuestionsOpen = openQuestionsIndex === index;
-          const variance = (vendor.actualCost || 0) - vendor.estimatedCost;
+          const isChecklistOpen = openChecklistIndex === index;
+          const imgUrl = vendor.imageUrl || getVendorImage(vendor.category);
+          const milestones =
+            vendor.paymentMilestones || calculateVendorPaymentMilestones(vendor.estimatedCost);
 
           return (
             <div
               key={vendor.category || index}
-              className={`p-6 rounded-2xl border bg-card shadow-sm transition-all space-y-5 ${
+              className={`rounded-3xl border bg-card shadow-sm transition-all overflow-hidden flex flex-col justify-between ${
                 vendor.isBooked
-                  ? 'border-primary/50 bg-primary/5'
-                  : 'border-border hover:border-primary/30'
+                  ? 'border-primary/50 ring-1 ring-primary/20 bg-primary/[0.02]'
+                  : 'border-border hover:border-primary/40'
               }`}
             >
-              {/* Header */}
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`p-3 rounded-xl ${
-                      vendor.isBooked
-                        ? 'bg-primary text-white shadow-sm'
-                        : 'bg-muted text-primary'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground">
-                        {vendor.category}
+              <div>
+                {/* Visual Image Header Banner */}
+                <div className="relative h-36 w-full overflow-hidden bg-muted">
+                  <img
+                    src={imgUrl}
+                    alt={vendor.vendorName || vendor.category}
+                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+
+                  {/* Top Badges */}
+                  <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white border border-white/20 flex items-center gap-1.5">
+                      <Icon className="w-3 h-3 text-accent" />
+                      <span>{vendor.category}</span>
+                    </span>
+
+                    {vendor.rating && (
+                      <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-500/90 text-white shadow-sm flex items-center gap-1">
+                        ★ {vendor.rating}
+                        {vendor.reviewCount && (
+                          <span className="text-[10px] opacity-90">({vendor.reviewCount})</span>
+                        )}
                       </span>
-                      {vendor.rating && (
-                        <span className="text-xs font-bold text-amber-700 dark:text-amber-400 flex items-center gap-0.5">
-                          ★ {vendor.rating}
-                          {vendor.reviewCount && (
-                            <span className="text-[10px] font-normal text-muted-foreground">({vendor.reviewCount})</span>
-                          )}
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="text-base font-bold text-foreground leading-tight mt-1">
+                    )}
+                  </div>
+
+                  {/* Bottom Image Overlay Text */}
+                  <div className="absolute bottom-3 left-4 right-4">
+                    <h3 className="text-base sm:text-lg font-bold text-white tracking-tight leading-tight drop-shadow-md">
                       {vendor.vendorName || vendor.category}
                     </h3>
+                  </div>
+                </div>
+
+                {/* Card Body */}
+                <div className="p-5 sm:p-6 space-y-4">
+                  {/* Specialty and Verified Badge */}
+                  <div className="space-y-1.5">
                     {vendor.specialty && (
-                      <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                      <p className="text-xs font-medium text-foreground/90 line-clamp-2">
                         {vendor.specialty}
                       </p>
                     )}
+
+                    {vendor.verifiedBadge && (
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-900 dark:text-amber-300 border border-amber-500/25 text-[11px] font-semibold">
+                        <Shield className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                        <span>{vendor.verifiedBadge}</span>
+                      </div>
+                    )}
+
                     {vendor.vendorAddress && (
-                      <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-1">
-                        <MapPin className="w-3 h-3 text-accent shrink-0" />
+                      <p className="text-xs text-muted-foreground flex items-center gap-1.5 pt-1">
+                        <MapPin className="w-3.5 h-3.5 text-accent shrink-0" />
                         <span className="truncate">{vendor.vendorAddress}</span>
                       </p>
                     )}
-                    <span className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                      <Calendar className="w-3 h-3" />
-                      Book by: {formatDate(vendor.bookBy)}
-                    </span>
-                  </div>
-                </div>
 
-                {/* Right Action: Booked Toggle & Phone Inquiry */}
-                <div className="flex flex-col items-end gap-2">
-                  <button
-                    type="button"
-                    role="button"
-                    aria-pressed={vendor.isBooked}
-                    onClick={() => toggleBooked(index)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                      vendor.isBooked
-                        ? 'bg-primary text-white shadow-sm'
-                        : 'border border-border bg-background hover:bg-muted text-muted-foreground'
-                    }`}
-                  >
-                    <Check className="w-3.5 h-3.5" />
-                    <span>{vendor.isBooked ? 'Booked' : 'Mark Booked'}</span>
-                  </button>
-
-                  {vendor.vendorPhone && (
-                    <a
-                      href={`https://api.whatsapp.com/send?text=${encodeURIComponent(
-                        `Namaste! Inquiring regarding services for our upcoming event in ${vendor.vendorAddress || 'city'}.`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[11px] text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1 font-semibold focus:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
-                    >
-                      <span>Inquire: {vendor.vendorPhone}</span>
-                    </a>
-                  )}
-                </div>
-              </div>
-
-              {/* Verified Badge Pill */}
-              {vendor.verifiedBadge && (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/25 text-[11px] font-semibold">
-                  <Shield className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                  <span>{vendor.verifiedBadge}</span>
-                </div>
-              )}
-
-              {/* Estimated vs Actual Cost Input Row */}
-              <div className="grid grid-cols-2 gap-3 p-3.5 rounded-xl bg-muted/40 border border-border/80">
-                <div>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
-                    Estimated Cost
-                  </span>
-                  <span className="text-sm font-bold text-foreground">
-                    {formatINR(vendor.estimatedCost)}
-                  </span>
-                </div>
-
-                <div>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block mb-0.5">
-                    Actual Spent (₹)
-                  </span>
-                  <div className="relative">
-                    <span className="absolute left-2 top-1.5 text-xs text-muted-foreground">₹</span>
-                    <input
-                      type="number"
-                      step="500"
-                      min="0"
-                      aria-label={`Actual cost spent for ${vendor.category}`}
-                      value={vendor.actualCost || ''}
-                      onChange={(e) => handleActualCostChange(index, parseFloat(e.target.value))}
-                      placeholder="0"
-                      className="w-full pl-5 pr-2 py-1 rounded-lg border border-input bg-background text-xs font-bold text-foreground focus:outline-none focus:ring-1 focus:ring-primary font-mono"
-                    />
-                  </div>
-                </div>
-
-                {vendor.actualCost !== undefined && vendor.actualCost > 0 && (
-                  <div className="col-span-2 pt-1 border-t border-border/50 flex items-center justify-between text-[11px]">
-                    <span className="text-muted-foreground">Variance:</span>
-                    <span
-                      className={`font-bold ${
-                        variance > 0
-                          ? 'text-destructive'
-                          : variance < 0
-                          ? 'text-emerald-600'
-                          : 'text-muted-foreground'
-                      }`}
-                    >
-                      {variance > 0
-                        ? `+₹${variance.toLocaleString('en-IN')} over estimate`
-                        : variance < 0
-                        ? `Saved ₹${Math.abs(variance).toLocaleString('en-IN')}`
-                        : 'Exact match'}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Checklist */}
-              {vendor.checklist && vendor.checklist.length > 0 && (
-                <div className="space-y-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
-                    Execution Checklist
-                  </span>
-                  <ul className="space-y-1.5 text-xs text-foreground">
-                    {vendor.checklist.map((item, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
-                        <span className="leading-relaxed">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Questions to Ask (Collapsible Accordion) */}
-              {vendor.questionsToAsk && vendor.questionsToAsk.length > 0 && (
-                <div className="pt-2 border-t border-border/60">
-                  <button
-                    type="button"
-                    onClick={() => setOpenQuestionsIndex(isQuestionsOpen ? null : index)}
-                    aria-expanded={isQuestionsOpen}
-                    aria-controls={`vendor-questions-${index}`}
-                    className="w-full flex items-center justify-between text-xs font-bold text-primary hover:underline py-1"
-                  >
-                    <span className="flex items-center gap-1.5">
-                      <HelpCircle className="w-3.5 h-3.5 text-primary" />
-                      Key Questions to Ask Before Signing ({vendor.questionsToAsk.length})
-                    </span>
-                    {isQuestionsOpen ? (
-                      <ChevronUp className="w-4 h-4" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4" />
-                    )}
-                  </button>
-
-                  {isQuestionsOpen && (
-                    <div
-                      id={`vendor-questions-${index}`}
-                      className="mt-3 p-3.5 rounded-xl bg-accent/10 border border-accent/25 space-y-2 animate-fade-in"
-                    >
-                      {vendor.questionsToAsk.map((q, qIdx) => (
-                        <div key={qIdx} className="flex items-start gap-2 text-xs text-foreground">
-                          <span className="text-accent font-bold">•</span>
-                          <span className="leading-relaxed">{q}</span>
-                        </div>
-                      ))}
+                    <div className="text-xs text-muted-foreground flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-primary shrink-0" />
+                      <span>Target Lock Date: <strong>{formatDate(vendor.bookBy)}</strong></span>
                     </div>
+                  </div>
+
+                  {/* Estimated vs Actual Cost Input Row */}
+                  <div className="grid grid-cols-2 gap-3 p-3.5 rounded-2xl bg-muted/40 border border-border/80">
+                    <div>
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
+                        Estimated Cost
+                      </span>
+                      <span className="text-base font-black text-foreground">
+                        {formatINR(vendor.estimatedCost)}
+                      </span>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block mb-0.5">
+                        Actual Contract (₹)
+                      </span>
+                      <div className="relative">
+                        <span className="absolute left-2.5 top-1.5 text-xs text-muted-foreground">₹</span>
+                        <input
+                          type="number"
+                          value={vendor.actualCost || ''}
+                          onChange={(e) => handleActualCostChange(index, parseFloat(e.target.value))}
+                          placeholder="e.g. 150000"
+                          className="w-full pl-6 pr-2.5 py-1 text-xs font-bold rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Real-World 3-Tier Payment Tranche Tracker */}
+                  <div className="p-3.5 rounded-2xl bg-muted/20 border border-border/60 space-y-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                      <CreditCard className="w-3 h-3 text-primary" />
+                      <span>Contract Payment Tranches</span>
+                    </span>
+
+                    <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                      {/* Tranche 1 */}
+                      <button
+                        type="button"
+                        onClick={() => toggleMilestone(index, 'advancePaid')}
+                        className={`p-2 rounded-xl border text-[11px] font-medium transition-all ${
+                          milestones.advancePaid
+                            ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-800 dark:text-emerald-300 font-bold'
+                            : 'bg-card border-border hover:bg-muted text-muted-foreground'
+                        }`}
+                      >
+                        <span className="block text-[9px] uppercase font-bold opacity-80">
+                          25% Token
+                        </span>
+                        <span>{formatINR(milestones.advanceToken)}</span>
+                        <span className="block text-[9px] mt-0.5">
+                          {milestones.advancePaid ? '✓ Paid' : '○ Pending'}
+                        </span>
+                      </button>
+
+                      {/* Tranche 2 */}
+                      <button
+                        type="button"
+                        onClick={() => toggleMilestone(index, 'midWayPaid')}
+                        className={`p-2 rounded-xl border text-[11px] font-medium transition-all ${
+                          milestones.midWayPaid
+                            ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-800 dark:text-emerald-300 font-bold'
+                            : 'bg-card border-border hover:bg-muted text-muted-foreground'
+                        }`}
+                      >
+                        <span className="block text-[9px] uppercase font-bold opacity-80">
+                          50% Mid-Way
+                        </span>
+                        <span>{formatINR(milestones.midWay)}</span>
+                        <span className="block text-[9px] mt-0.5">
+                          {milestones.midWayPaid ? '✓ Paid' : '○ Pending'}
+                        </span>
+                      </button>
+
+                      {/* Tranche 3 */}
+                      <button
+                        type="button"
+                        onClick={() => toggleMilestone(index, 'finalPaid')}
+                        className={`p-2 rounded-xl border text-[11px] font-medium transition-all ${
+                          milestones.finalPaid
+                            ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-800 dark:text-emerald-300 font-bold'
+                            : 'bg-card border-border hover:bg-muted text-muted-foreground'
+                        }`}
+                      >
+                        <span className="block text-[9px] uppercase font-bold opacity-80">
+                          25% Final
+                        </span>
+                        <span>{formatINR(milestones.finalSettlement)}</span>
+                        <span className="block text-[9px] mt-0.5">
+                          {milestones.finalPaid ? '✓ Paid' : '○ Pending'}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Checklist & Questions Accordions */}
+                  <div className="space-y-2 pt-1">
+                    {/* Checklist */}
+                    {vendor.checklist && vendor.checklist.length > 0 && (
+                      <div className="border border-border/70 rounded-xl overflow-hidden">
+                        <button
+                          type="button"
+                          onClick={() => setOpenChecklistIndex(isChecklistOpen ? null : index)}
+                          className="w-full px-3.5 py-2.5 bg-muted/30 hover:bg-muted/60 text-xs font-bold text-foreground flex items-center justify-between transition-colors"
+                        >
+                          <span className="flex items-center gap-1.5">
+                            <CheckSquare className="w-3.5 h-3.5 text-primary" />
+                            <span>Inclusions Checklist ({vendor.checklist.length})</span>
+                          </span>
+                          {isChecklistOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                        </button>
+                        {isChecklistOpen && (
+                          <div className="p-3 bg-card space-y-1.5 text-xs text-muted-foreground">
+                            {vendor.checklist.map((item, i) => (
+                              <div key={i} className="flex items-start gap-2">
+                                <span className="text-primary font-bold">✓</span>
+                                <span>{item}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Questions */}
+                    {vendor.questionsToAsk && vendor.questionsToAsk.length > 0 && (
+                      <div className="border border-border/70 rounded-xl overflow-hidden">
+                        <button
+                          type="button"
+                          onClick={() => setOpenQuestionsIndex(isQuestionsOpen ? null : index)}
+                          className="w-full px-3.5 py-2.5 bg-muted/30 hover:bg-muted/60 text-xs font-bold text-foreground flex items-center justify-between transition-colors"
+                        >
+                          <span className="flex items-center gap-1.5">
+                            <HelpCircle className="w-3.5 h-3.5 text-accent" />
+                            <span>Questions to Ask Before Advance ({vendor.questionsToAsk.length})</span>
+                          </span>
+                          {isQuestionsOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                        </button>
+                        {isQuestionsOpen && (
+                          <div className="p-3 bg-card space-y-1.5 text-xs text-muted-foreground">
+                            {vendor.questionsToAsk.map((q, i) => (
+                              <div key={i} className="flex items-start gap-2">
+                                <span className="text-accent font-bold">?</span>
+                                <span>{q}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Bar Footer */}
+              <div className="px-5 py-3.5 bg-muted/40 border-t border-border flex items-center justify-between gap-3">
+                {/* Contact Links */}
+                <div className="flex items-center gap-2">
+                  {vendor.vendorPhone && (
+                    <>
+                      <a
+                        href={`tel:${vendor.vendorPhone}`}
+                        className="p-2 rounded-xl border border-border bg-card hover:bg-muted text-foreground transition-all hover:scale-105 active:scale-95"
+                        title={`Call ${vendor.vendorPhone}`}
+                      >
+                        <Phone className="w-3.5 h-3.5 text-primary" />
+                      </a>
+                      <a
+                        href={`https://api.whatsapp.com/send?text=${encodeURIComponent(
+                          `Namaste! Inquiring regarding services for our upcoming event in ${
+                            vendor.vendorAddress || 'city'
+                          }.`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-emerald-50 dark:hover:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm"
+                        title="Chat on WhatsApp"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                        <span className="hidden sm:inline">WhatsApp</span>
+                      </a>
+                    </>
                   )}
                 </div>
-              )}
+
+                {/* Primary Booked Button */}
+                <button
+                  type="button"
+                  onClick={() => toggleBooked(index)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm ${
+                    vendor.isBooked
+                      ? 'bg-primary text-white hover:bg-primary/90'
+                      : 'border border-border bg-card hover:bg-muted text-foreground'
+                  }`}
+                >
+                  <Check className="w-3.5 h-3.5" />
+                  <span>{vendor.isBooked ? 'Contract Locked' : 'Mark Booked'}</span>
+                </button>
+              </div>
             </div>
           );
         })}

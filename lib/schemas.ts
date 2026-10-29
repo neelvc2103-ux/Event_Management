@@ -82,12 +82,23 @@ export const vendorItemSchema = z.object({
   reviewCount: z.number().min(0).optional(),
   verifiedBadge: z.string().max(80).optional(),
   specialty: z.string().max(150).optional(),
-});
+  imageUrl: z.string().optional(),
+  paymentMilestones: z.object({
+    advanceToken: z.number(),
+    midWay: z.number(),
+    finalSettlement: z.number(),
+    advancePaid: z.boolean().optional(),
+    midWayPaid: z.boolean().optional(),
+    finalPaid: z.boolean().optional(),
+  }).optional(),
+}).passthrough();
 
 export const themeItemSchema = z.object({
   name: z.string().max(100),
   description: z.string().max(600),
-});
+  imageUrl: z.string().optional(),
+  palette: z.array(z.string()).optional(),
+}).passthrough();
 
 export const ideasOutputSchema = z.object({
   themes: z.array(themeItemSchema).default([]),
@@ -95,7 +106,7 @@ export const ideasOutputSchema = z.object({
   menu: z.array(z.string().max(400)).default([]),
   entertainment: z.array(z.string().max(400)).default([]),
   giftsAndFavors: z.array(z.string().max(400)).default([]),
-});
+}).passthrough();
 
 export const realVenueDetailsSchema = z.object({
   id: z.string(),
@@ -109,21 +120,48 @@ export const realVenueDetailsSchema = z.object({
   rating: z.number(),
   highlights: z.array(z.string()),
   mapsQuery: z.string(),
-});
+  imageUrl: z.string().optional(),
+  distanceInfo: z.string().optional(),
+  parkingSpots: z.number().optional(),
+}).passthrough();
+
+export const runOfShowItemSchema = z.object({
+  id: z.string(),
+  time: z.string(),
+  eventTitle: z.string(),
+  description: z.string(),
+  location: z.string(),
+  coordinator: z.string(),
+  phone: z.string().optional(),
+  completed: z.boolean().optional(),
+  urgentNote: z.string().optional(),
+}).passthrough();
+
+export const guestStatsSchema = z.object({
+  totalExpected: z.number(),
+  confirmed: z.number(),
+  pending: z.number(),
+  dietary: z.object({
+    jain: z.number(),
+    pureVeg: z.number(),
+    regular: z.number(),
+  }),
+  vipCount: z.number(),
+}).passthrough();
 
 export const muhuratDetailsSchema = z.object({
   shubhMuhurat: z.string(),
   nakshatra: z.string(),
   ritualsOrder: z.array(z.string()),
   priestGuidelines: z.string(),
-});
+}).passthrough();
 
 export const civicComplianceSchema = z.object({
   soundCurfew: z.string(),
   municipalOffice: z.string(),
   flowerMarket: z.string(),
   fireNocRequired: z.boolean(),
-});
+}).passthrough();
 
 export const llmPlanOutputSchema = z.object({
   summary: z.string().min(10),
@@ -134,7 +172,9 @@ export const llmPlanOutputSchema = z.object({
   venueDetails: realVenueDetailsSchema.optional(),
   muhuratDetails: muhuratDetailsSchema.optional(),
   civicCompliance: civicComplianceSchema.optional(),
-});
+  runOfShow: z.array(runOfShowItemSchema).optional(),
+  guestStats: guestStatsSchema.optional(),
+}).passthrough();
 
 export type LLMPlanOutput = z.infer<typeof llmPlanOutputSchema>;
 
@@ -151,7 +191,9 @@ export const eventPlanSchema = z.object({
   venueDetails: realVenueDetailsSchema.optional(),
   muhuratDetails: muhuratDetailsSchema.optional(),
   civicCompliance: civicComplianceSchema.optional(),
-});
+  runOfShow: z.array(runOfShowItemSchema).optional(),
+  guestStats: guestStatsSchema.optional(),
+}).passthrough();
 
 export const regenerateRequestSchema = z.object({
   plan: eventPlanSchema,
