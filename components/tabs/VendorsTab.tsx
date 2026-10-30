@@ -28,13 +28,18 @@ import {
   Filter,
   CreditCard,
   CheckSquare,
+  FileCheck2,
+  Scale,
+  Info,
 } from 'lucide-react';
-import { VendorItem } from '@/types';
+import { VendorItem, EventPlan } from '@/types';
 import { formatINR, formatDate } from '@/lib/formatters';
 import { getVendorImage, calculateVendorPaymentMilestones } from '@/lib/visualAssets';
+import { VendorQuotationModal } from '../VendorQuotationModal';
 
 interface VendorsTabProps {
   vendors: VendorItem[];
+  plan?: EventPlan;
   onUpdateVendor: (index: number, updatedVendor: VendorItem) => void;
 }
 
@@ -73,9 +78,10 @@ function getCategoryIcon(category: string) {
   return Store;
 }
 
-export function VendorsTab({ vendors, onUpdateVendor }: VendorsTabProps) {
+export function VendorsTab({ vendors, plan, onUpdateVendor }: VendorsTabProps) {
   const [openQuestionsIndex, setOpenQuestionsIndex] = useState<number | null>(null);
   const [openChecklistIndex, setOpenChecklistIndex] = useState<number | null>(null);
+  const [quotationVendorIndex, setQuotationVendorIndex] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
 
@@ -97,6 +103,18 @@ export function VendorsTab({ vendors, onUpdateVendor }: VendorsTabProps) {
       ...target,
       actualCost: isNaN(cost) ? 0 : cost,
     });
+  };
+
+  const handleApplyQuote = (quoteCost: number, vendorName: string) => {
+    if (quotationVendorIndex !== null) {
+      const target = vendors[quotationVendorIndex];
+      onUpdateVendor(quotationVendorIndex, {
+        ...target,
+        actualCost: quoteCost,
+        vendorName: vendorName,
+        isBooked: true,
+      });
+    }
   };
 
   const toggleMilestone = (vendorIndex: number, tranche: 'advancePaid' | 'midWayPaid' | 'finalPaid') => {
@@ -313,8 +331,9 @@ export function VendorsTab({ vendors, onUpdateVendor }: VendorsTabProps) {
                   {/* Estimated vs Actual Cost Input Row */}
                   <div className="grid grid-cols-2 gap-3 p-3.5 rounded-2xl bg-muted/40 border border-border/80">
                     <div>
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
-                        Estimated Cost
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center justify-between">
+                        <span>Estimated Cost</span>
+                        <span className="text-[9px] font-medium text-amber-700 dark:text-amber-400">Market Avg</span>
                       </span>
                       <span className="text-base font-black text-foreground">
                         {formatINR(vendor.estimatedCost)}
@@ -337,6 +356,18 @@ export function VendorsTab({ vendors, onUpdateVendor }: VendorsTabProps) {
                       </div>
                     </div>
                   </div>
+
+                  {/* Compare Quotations & Audit Hidden Costs Action */}
+                  {plan && (
+                    <button
+                      type="button"
+                      onClick={() => setQuotationVendorIndex(index)}
+                      className="w-full py-2 px-3 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+                    >
+                      <FileCheck2 className="w-3.5 h-3.5 text-primary" />
+                      <span>Compare 3 Quotes & Audit Hidden Costs</span>
+                    </button>
+                  )}
 
                   {/* Real-World 3-Tier Payment Tranche Tracker */}
                   <div className="p-3.5 rounded-2xl bg-muted/20 border border-border/60 space-y-2">
@@ -513,6 +544,17 @@ export function VendorsTab({ vendors, onUpdateVendor }: VendorsTabProps) {
           );
         })}
       </div>
+
+      {/* Vendor Quotation Comparison Matrix Modal */}
+      {quotationVendorIndex !== null && plan && vendors[quotationVendorIndex] && (
+        <VendorQuotationModal
+          plan={plan}
+          vendor={vendors[quotationVendorIndex]}
+          isOpen={true}
+          onClose={() => setQuotationVendorIndex(null)}
+          onApplySelectedQuote={handleApplyQuote}
+        />
+      )}
     </div>
   );
 }

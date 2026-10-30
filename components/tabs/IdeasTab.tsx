@@ -369,6 +369,78 @@ export function IdeasTab({ ideas, onRegenerateSection }: IdeasTabProps) {
           ))}
         </div>
       </div>
+
+      {/* 6. MULTI-GENERATIONAL & ACCESSIBILITY ACCOMMODATION (SME Explainer Directive) */}
+      <div className="bg-card border border-border rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+        <div className="space-y-1 pb-3 border-b border-border/80">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2.5 rounded-xl bg-accent/20 text-accent-foreground font-bold">
+              <span>♿</span>
+            </div>
+            <div>
+              <h3 className="text-base sm:text-lg font-bold text-foreground font-serif tracking-tight flex items-center gap-2">
+                <span>Multi-Generational & Accessibility Blueprint</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 font-sans">
+                  All Ages Curation
+                </span>
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Tailored provisions for elders, toddlers, dietary restrictions and physical accessibility
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+          <div className="p-4 rounded-2xl border border-border/80 bg-muted/20 space-y-2">
+            <span className="font-bold text-foreground text-sm flex items-center gap-1.5">
+              <span>👵</span>
+              <span>Elder Family Comfort</span>
+            </span>
+            <ul className="space-y-1 text-muted-foreground text-[11px] leading-relaxed">
+              <li>• Ground-floor cushioned sofa seating directly facing Muhurat rituals</li>
+              <li>• Wheelchair ramp gradient verified at main banquet & stage entry</li>
+              <li>• Low-decibel acoustic lounge away from 120dB live Dhol-Tasha</li>
+            </ul>
+          </div>
+
+          <div className="p-4 rounded-2xl border border-border/80 bg-muted/20 space-y-2">
+            <span className="font-bold text-foreground text-sm flex items-center gap-1.5">
+              <span>👶</span>
+              <span>Kids & Toddlers Play Nook</span>
+            </span>
+            <ul className="space-y-1 text-muted-foreground text-[11px] leading-relaxed">
+              <li>• Supervised activity table with coloring sheets & balloon crafts</li>
+              <li>• Mild finger food counter (potato wedges, mini idlis, fruit skewers)</li>
+              <li>• Safe buffer zone away from stage power cables and halogen lamps</li>
+            </ul>
+          </div>
+
+          <div className="p-4 rounded-2xl border border-border/80 bg-muted/20 space-y-2">
+            <span className="font-bold text-foreground text-sm flex items-center gap-1.5">
+              <span>🥗</span>
+              <span>Dietary & Satvik Separation</span>
+            </span>
+            <ul className="space-y-1 text-muted-foreground text-[11px] leading-relaxed">
+              <li>• 100% separate Jain catering counter (strictly no onion, garlic, or root crops)</li>
+              <li>• Sugar-free / diabetic dessert counter clearly labeled in Gujarati/Hindi</li>
+              <li>• Nut-free children snack trays to prevent accidental allergic triggers</li>
+            </ul>
+          </div>
+
+          <div className="p-4 rounded-2xl border border-border/80 bg-muted/20 space-y-2">
+            <span className="font-bold text-foreground text-sm flex items-center gap-1.5">
+              <span>🚗</span>
+              <span>Arrival & Valet Logistics</span>
+            </span>
+            <ul className="space-y-1 text-muted-foreground text-[11px] leading-relaxed">
+              <li>• Priority golf-cart shuttle from parking lot to entrance archway</li>
+              <li>• Express baggage check-in desk for guests arriving straight from airport</li>
+              <li>• Umbrella & shade canopies along walkway during afternoon Muhurat</li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

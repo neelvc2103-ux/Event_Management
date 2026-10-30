@@ -9,6 +9,9 @@ import {
   AlertCircle,
   Flag,
   ListTodo,
+  AlertTriangle,
+  GitBranch,
+  ShieldCheck,
 } from 'lucide-react';
 import { TimelineTask } from '@/types';
 import { formatDate, getDaysRemaining } from '@/lib/formatters';
@@ -24,6 +27,15 @@ export function TimelineTab({ timeline, eventDate, onToggleTask }: TimelineTabPr
   const countdown = React.useMemo(() => getDaysRemaining(eventDate), [eventDate]);
   const progress = React.useMemo(() => calculateProgress(timeline), [timeline]);
   const grouped = React.useMemo(() => groupTasksByPhase(timeline), [timeline]);
+
+  // Dynamic Dependency Tracking (Per SME instructions)
+  const isVenueLocked = React.useMemo(() => {
+    const venueTask = timeline.find((t) => {
+      const lower = t.task.toLowerCase();
+      return lower.includes('venue') || lower.includes('hall') || lower.includes('resort') || lower.includes('ground');
+    });
+    return venueTask ? venueTask.completed : true;
+  }, [timeline]);
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -152,6 +164,41 @@ export function TimelineTab({ timeline, eventDate, onToggleTask }: TimelineTabPr
                           >
                             {task.priority}
                           </span>
+
+                          {/* Dynamic Task Dependency Badges (SME Recommended) */}
+                          {(() => {
+                            const lower = task.task.toLowerCase();
+                            const isAnchor = lower.includes('venue') || lower.includes('hall') || lower.includes('resort') || lower.includes('ground');
+                            const isDownstream = lower.includes('invit') || lower.includes('cater') || lower.includes('decor') || lower.includes('print') || lower.includes('sound');
+
+                            if (isAnchor) {
+                              return (
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center gap-1">
+                                  <GitBranch className="w-2.5 h-2.5 text-primary" />
+                                  <span>Core Anchor Task</span>
+                                </span>
+                              );
+                            }
+
+                            if (isDownstream && !task.completed) {
+                              if (!isVenueLocked) {
+                                return (
+                                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25 flex items-center gap-1">
+                                    <AlertTriangle className="w-2.5 h-2.5 text-amber-600" />
+                                    <span>Prerequisite: Lock Venue First</span>
+                                  </span>
+                                );
+                              } else {
+                                return (
+                                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20 flex items-center gap-1">
+                                    <ShieldCheck className="w-2.5 h-2.5 text-emerald-600" />
+                                    <span>Prerequisite Cleared</span>
+                                  </span>
+                                );
+                              }
+                            }
+                            return null;
+                          })()}
                         </div>
 
                         {/* Due Date & Milestone Info */}

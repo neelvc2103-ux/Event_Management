@@ -2,12 +2,13 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Sparkles, Calendar, Moon, Sun, FolderOpen, Plus, Ticket } from 'lucide-react';
+import { Sparkles, Calendar, Moon, Sun, FolderOpen, Plus, Ticket, Award } from 'lucide-react';
 
 interface NavbarProps {
   onOpenSavedPlans: () => void;
   onNewPlan: () => void;
   onOpenVipPass?: () => void;
+  onOpenGuide?: () => void;
   savedPlansCount: number;
   darkMode: boolean;
   onToggleDarkMode: () => void;
@@ -17,6 +18,7 @@ export function Navbar({
   onOpenSavedPlans,
   onNewPlan,
   onOpenVipPass,
+  onOpenGuide,
   savedPlansCount,
   darkMode,
   onToggleDarkMode,
@@ -46,6 +48,17 @@ export function Navbar({
 
         {/* Action Controls */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {onOpenGuide && (
+            <button
+              onClick={onOpenGuide}
+              className="hidden md:flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30 transition-all shadow-sm active:scale-95"
+              title="PromptWars Challenge 5 Submission Guide & Walkthrough Script"
+            >
+              <Award className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>Challenge 5 Guide</span>
+            </button>
+          )}
+
           {onOpenVipPass && (
             <button
               onClick={onOpenVipPass}

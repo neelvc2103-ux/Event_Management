@@ -23,6 +23,7 @@ import {
   CheckCircle2,
   AlertTriangle,
   Compass,
+  Scale,
 } from 'lucide-react';
 import { EventPlan, BudgetData, TimelineTask, VendorItem, IdeaSectionKey } from '@/types';
 import { formatINR, formatDate, getDaysRemaining } from '@/lib/formatters';
@@ -36,6 +37,7 @@ import { PdfDossierModal } from './PdfDossierModal';
 import { DigitalPassModal } from './DigitalPassModal';
 import { EditorialPdfExportModal } from './EditorialPdfExportModal';
 import { WhatsAppRsvpDispatcher } from './WhatsAppRsvpDispatcher';
+import { TradeOffSimulatorModal } from './TradeOffSimulatorModal';
 import { CURATED_VISUALS } from '@/lib/visualAssets';
 
 interface PlanDashboardProps {
@@ -52,6 +54,7 @@ export function PlanDashboard({ plan, onUpdatePlan, onEditForm }: PlanDashboardP
   const [isPassModalOpen, setIsPassModalOpen] = useState(false);
   const [isElderPdfOpen, setIsElderPdfOpen] = useState(false);
   const [isWaDispatcherOpen, setIsWaDispatcherOpen] = useState(false);
+  const [isTradeOffOpen, setIsTradeOffOpen] = useState(false);
 
   const countdown = React.useMemo(() => getDaysRemaining(plan.formData.eventDate), [plan.formData.eventDate]);
 
@@ -258,6 +261,15 @@ export function PlanDashboard({ plan, onUpdatePlan, onEditForm }: PlanDashboardP
               >
                 <Printer className="w-4 h-4 text-accent" />
                 <span>📄 One-Click Editorial PDF</span>
+              </button>
+
+              <button
+                onClick={() => setIsTradeOffOpen(true)}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border-2 border-red-500/40 bg-gradient-to-r from-red-500/10 via-card to-amber-500/10 hover:border-red-500 text-xs font-bold text-red-900 dark:text-red-200 transition-all hover:scale-105 active:scale-95 shadow-sm"
+                title="SME Recommended: What-If Scenario & Trade-Off Simulator (+20% Cost Spike, +50 Guests, -15% Budget)"
+              >
+                <Scale className="w-4 h-4 text-red-500 animate-pulse" />
+                <span>⚖️ Trade-Offs & 20% Spike</span>
               </button>
 
               <button
@@ -485,6 +497,18 @@ export function PlanDashboard({ plan, onUpdatePlan, onEditForm }: PlanDashboardP
                 }}
               />
             </div>
+            <div className="pt-2 border-t border-border flex items-center justify-between">
+              <span className="text-[10px] text-muted-foreground font-mono">100% Balanced</span>
+              <button
+                type="button"
+                onClick={() => setIsTradeOffOpen(true)}
+                className="text-[10px] font-bold text-red-600 dark:text-red-400 hover:underline flex items-center gap-1"
+                title="SME Challenge: What-If 20% Inflation or Guest Surge occurs"
+              >
+                <span>Simulate 20% Spike</span>
+                <Scale className="w-3 h-3 text-red-500" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -641,7 +665,11 @@ export function PlanDashboard({ plan, onUpdatePlan, onEditForm }: PlanDashboardP
           hidden={activeTab !== 'budget'}
         >
           {activeTab === 'budget' && (
-            <BudgetTab budget={plan.budget} onUpdateBudget={handleUpdateBudget} />
+            <BudgetTab
+              budget={plan.budget}
+              onUpdateBudget={handleUpdateBudget}
+              onOpenTradeOffModal={() => setIsTradeOffOpen(true)}
+            />
           )}
         </div>
         <div
@@ -665,7 +693,7 @@ export function PlanDashboard({ plan, onUpdatePlan, onEditForm }: PlanDashboardP
           hidden={activeTab !== 'vendors'}
         >
           {activeTab === 'vendors' && (
-            <VendorsTab vendors={plan.vendors} onUpdateVendor={handleUpdateVendor} />
+            <VendorsTab vendors={plan.vendors} plan={plan} onUpdateVendor={handleUpdateVendor} />
           )}
         </div>
         <div
@@ -826,6 +854,14 @@ export function PlanDashboard({ plan, onUpdatePlan, onEditForm }: PlanDashboardP
           setIsWaDispatcherOpen(false);
           setIsPassModalOpen(true);
         }}
+      />
+
+      {/* Dynamic Scenario & Trade-Off Simulator Modal (SME Recommended) */}
+      <TradeOffSimulatorModal
+        plan={plan}
+        isOpen={isTradeOffOpen}
+        onClose={() => setIsTradeOffOpen(false)}
+        onApplyPlanUpdate={onUpdatePlan}
       />
     </div>
   );

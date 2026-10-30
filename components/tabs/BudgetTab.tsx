@@ -15,6 +15,7 @@ import {
   RotateCcw,
   TrendingDown,
   Info,
+  Scale,
 } from 'lucide-react';
 import { BudgetData, BudgetCategory } from '@/types';
 import { formatINR, formatINRLakhs } from '@/lib/formatters';
@@ -23,6 +24,7 @@ import { rebalanceCategories, rebalanceByAmount } from '@/lib/budgetMath';
 interface BudgetTabProps {
   budget: BudgetData;
   onUpdateBudget: (newBudget: BudgetData) => void;
+  onOpenTradeOffModal?: () => void;
 }
 
 const PALETTE = [
@@ -37,7 +39,7 @@ const PALETTE = [
   '#4B5563', // Slate
 ];
 
-export function BudgetTab({ budget, onUpdateBudget }: BudgetTabProps) {
+export function BudgetTab({ budget, onUpdateBudget, onOpenTradeOffModal }: BudgetTabProps) {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const handlePercentageChange = (index: number, newPercentage: number) => {
@@ -174,9 +176,21 @@ export function BudgetTab({ budget, onUpdateBudget }: BudgetTabProps) {
 
       {/* Editable Category Sliders */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold text-foreground">Category Allocations</h3>
-          <span className="text-xs text-muted-foreground">Adjust sliders or enter rupees</span>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h3 className="text-lg font-bold text-foreground">Category Allocations</h3>
+            <p className="text-xs text-muted-foreground">Adjust sliders or enter rupees with guaranteed zero drift</p>
+          </div>
+          {onOpenTradeOffModal && (
+            <button
+              type="button"
+              onClick={onOpenTradeOffModal}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border-2 border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-xs font-bold text-red-900 dark:text-red-200 transition-all shadow-sm active:scale-95"
+            >
+              <Scale className="w-3.5 h-3.5 text-red-500" />
+              <span>⚖️ Simulate 20% Cost Spike & Trade-Offs</span>
+            </button>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

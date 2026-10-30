@@ -9,6 +9,7 @@ import { LoadingPlanState } from '@/components/LoadingPlanState';
 import { PlanDashboard } from '@/components/PlanDashboard';
 import { SavedPlansDrawer } from '@/components/SavedPlansDrawer';
 import { DigitalPassModal } from '@/components/DigitalPassModal';
+import { SubmissionGuideModal } from '@/components/SubmissionGuideModal';
 import { decodeShareTokenToPlan } from '@/lib/shareUtils';
 import { EventFormData, EventPlan } from '@/types';
 import {
@@ -27,6 +28,7 @@ export default function Home() {
   const [formPrefill, setFormPrefill] = useState<EventFormData | null>(null);
   const [isSavedDrawerOpen, setIsSavedDrawerOpen] = useState(false);
   const [isGlobalPassOpen, setIsGlobalPassOpen] = useState(false);
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [sharedNotice, setSharedNotice] = useState<string | null>(null);
   const [darkMode, setDarkMode] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -210,6 +212,7 @@ export default function Home() {
         onOpenSavedPlans={() => setIsSavedDrawerOpen(true)}
         onNewPlan={handleStartPlanning}
         onOpenVipPass={() => setIsGlobalPassOpen(true)}
+        onOpenGuide={() => setIsGuideOpen(true)}
         savedPlansCount={plans.length}
         darkMode={darkMode}
         onToggleDarkMode={toggleDarkMode}
@@ -322,6 +325,12 @@ export default function Home() {
         plan={activePlan || createSamplePlan('gujarati_wedding')}
         isOpen={isGlobalPassOpen}
         onClose={() => setIsGlobalPassOpen(false)}
+      />
+
+      {/* Challenge 5 Submission Guide & Walkthrough Script Modal */}
+      <SubmissionGuideModal
+        isOpen={isGuideOpen}
+        onClose={() => setIsGuideOpen(false)}
       />
     </div>
   );
