@@ -37,7 +37,7 @@ export function LandingHero({ onStartPlanning, onSelectSample }: LandingHeroProp
   const faqs = [
     {
       q: 'How does AYOJA handle real-world Indian vendors and locations?',
-      a: 'AYOJA is powered by a verified regional database covering popular localities across major Indian cities (Bhuj, Mumbai, Pune, Ahmedabad, Jaipur, Delhi NCR, and more). It links to real banquet halls, verified caterers with FSSAI certifications, local wholesale flower markets, and local municipal & police sound curfew guidelines.',
+      a: 'AYOJA is built around a curated regional reference dataset covering popular localities across major Indian cities (such as Bhuj, Mumbai, Pune, Ahmedabad, Jaipur, and Delhi NCR). It supplies regional venue benchmarks, standard catering profiles with dietary specializations (Jain/Pure Veg), wholesale flower market references, and local municipal & police 10 PM sound curfew guidelines.',
     },
     {
       q: 'Will budget adjustments break my total fund?',
@@ -46,6 +46,10 @@ export function LandingHero({ onStartPlanning, onSelectSample }: LandingHeroProp
     {
       q: 'What makes the timelines "zero-past"?',
       a: 'Unlike generic templates that place milestones in the past or assume a 1-year planning horizon, our backward calculation engine anchors directly to your upcoming event date and compresses deadlines intelligently if your celebration is just weeks away.',
+    },
+    {
+      q: 'How are vendor quotes and comparison matrices calculated?',
+      a: 'AYOJA generates indicative multi-tier estimates (Standard, Curated, and Luxury) derived from realistic regional price models and your guest count. This allows families to audit typical hidden charges and prepare negotiation questions before soliciting formal supplier bids.',
     },
   ];
 
@@ -74,7 +78,7 @@ export function LandingHero({ onStartPlanning, onSelectSample }: LandingHeroProp
           </h1>
 
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            From royal Gujarati lagna ceremonies in Bhuj to Mumbai society Ganesh pandals and vibrant kids’ birthday celebrations. Complete INR budgets, verified local vendors, backward-calculated timelines, and live day-of execution.
+            From royal Gujarati lagna ceremonies in Bhuj to Mumbai society Ganesh pandals and vibrant kids’ birthday celebrations. Complete INR budgets, regional vendor benchmarks with multi-tier quotation estimates, backward-calculated timelines, and live day-of execution.
           </p>
         </div>
 
@@ -154,20 +158,6 @@ export function LandingHero({ onStartPlanning, onSelectSample }: LandingHeroProp
               <span className="text-[10px] uppercase font-bold text-accent tracking-wider">Community Utsav</span>
               <p className="text-xs sm:text-sm font-bold text-white drop-shadow">Festive Illumination</p>
             </div>
-          </div>
-        </div>
-
-        {/* Press & Featured In Marquee */}
-        <div className="pt-8 border-y border-border/60 py-6 max-w-4xl mx-auto">
-          <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/80 mb-4">
-            RECOGNIZED BY LEADING WEDDING & DESIGN PUBLICATIONS
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-14 text-muted-foreground font-serif tracking-widest text-xs sm:text-sm uppercase font-semibold">
-            <span>VANITY FAIR</span>
-            <span>STYLE ME PRETTY</span>
-            <span>VOGUE INDIA</span>
-            <span>WEDMEGOOD</span>
-            <span>ARCHITECTURAL DIGEST</span>
           </div>
         </div>
       </div>
@@ -343,24 +333,20 @@ export function LandingHero({ onStartPlanning, onSelectSample }: LandingHeroProp
         </div>
       </div>
 
-      {/* 4. EDITORIAL TESTIMONIAL (AuraWed High-End Card) */}
+      {/* 4. DESIGN PHILOSOPHY & BLUEPRINT SHOWCASE */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <div className="p-8 sm:p-10 rounded-3xl border border-border bg-gradient-to-br from-card via-card to-primary/5 shadow-md relative overflow-hidden text-center space-y-4">
           <div className="flex justify-center text-accent">
-            <div className="flex gap-1">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 fill-accent" />
-              ))}
-            </div>
+            <Sparkles className="w-6 h-6 text-accent animate-pulse" />
           </div>
 
           <p className="text-base sm:text-xl font-serif italic text-foreground leading-relaxed max-w-2xl mx-auto">
-            “Working with AYOJA felt completely effortless. Every detail was intentional, culturally authentic to our family traditions, and kept us within our exact ₹15 Lakhs budget without a single surprise fee.”
+            “Turning moments into memories. Every ceremony detail is culturally authentic, strictly anchored to your target date, and mathematically locked within your exact rupee budget without hidden surprises.”
           </p>
 
           <div className="pt-2">
-            <h4 className="text-sm font-bold text-foreground">Diya & Aarav Parekh</h4>
-            <p className="text-xs text-muted-foreground">Married at Regenta Resort, Bhuj</p>
+            <h4 className="text-sm font-bold text-foreground">AYOJA Architectural Planning Standard</h4>
+            <p className="text-xs text-muted-foreground">Tested across verified regional scenarios from Bhuj to Mumbai</p>
           </div>
         </div>
       </div>

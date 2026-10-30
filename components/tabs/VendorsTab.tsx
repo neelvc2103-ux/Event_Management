@@ -200,7 +200,17 @@ export function VendorsTab({ vendors, plan, onUpdateVendor }: VendorsTabProps) {
         </div>
       </div>
 
-      {/* MeetCraft Search & Filter Bar */}
+      {/* Dataset & Quotation Transparency Banner */}
+      <div className="p-3.5 bg-muted/40 border border-border/80 rounded-2xl flex items-center justify-between gap-3 text-xs text-muted-foreground shadow-sm">
+        <div className="flex items-center gap-2">
+          <Info className="w-4 h-4 text-primary shrink-0" />
+          <span>
+            <strong>Reference Benchmarks & Indicative Modeling:</strong> Vendor profiles are derived from AYOJA&apos;s curated regional planning dataset. Quotations reflect calculated market-rate tiers (Standard, Recommended, and Luxury) to guide family budget planning prior to contracting live suppliers.
+          </span>
+        </div>
+      </div>
+
+      {/* AYOJA Search & Filter Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-card border border-border p-3.5 rounded-2xl shadow-sm">
         {/* Search Input */}
         <div className="relative flex-1">

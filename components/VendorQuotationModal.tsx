@@ -154,7 +154,7 @@ export function VendorQuotationModal({
                 </span>
               </h3>
               <p className="text-xs text-muted-foreground">
-                Compare competing quotes, audit hidden charges, and ask the right negotiation questions
+                Compare indicative market estimates across calculated price tiers, audit typical hidden fees, and prepare negotiation questions
               </p>
             </div>
           </div>
@@ -170,11 +170,11 @@ export function VendorQuotationModal({
 
         {/* Content Body */}
         <div className="p-6 space-y-6 overflow-y-auto flex-1">
-          {/* Transparency Disclaimer (Per SME instructions) */}
+          {/* Transparency & Indicative Tier Modeling Note */}
           <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-start gap-2.5 text-xs text-amber-900 dark:text-amber-200">
             <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
             <p className="leading-snug">
-              <strong>Transparent Estimation Protocol:</strong> Rates shown reflect regional market benchmarks in {plan.formData.city} for {guestCount} guests. We never claim a vendor is 100% booked until direct family verification and signed contract advance.
+              <strong>Indicative Price Tier Modeling:</strong> Quotations shown are synthetic market-rate estimates modeled across standard regional price tiers (Standard, Recommended, and Luxury) for {plan.formData.city} and {guestCount} guests. They serve as comparative planning benchmarks rather than live supplier contracts until formal bids are accepted.
             </p>
           </div>
 

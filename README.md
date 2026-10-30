@@ -1,233 +1,221 @@
-# EventCraft 🇮🇳 - GenAI-Powered Event Planning Assistant
+# AYOJA 🇮🇳 - Your Plans. Your People. Your Moments.
 
-> A full-stack, India-first GenAI event planning assistant for weddings, birthdays, and community festivals. Built with Next.js 14+ (App Router), TypeScript, Tailwind CSS, Recharts, and swappable LLM engines (Anthropic Claude & Google Gemini).
+> **AYOJA** (derived from *Ayojan* - आयोजन) is an intelligent, India-first event planning and command center for weddings, birthdays, and community festivals. Built with Next.js 14+ (App Router), TypeScript, Tailwind CSS, Recharts, and swappable Generative AI engines (Google Gemini & Anthropic Claude).
 
----
-
-## 🌟 Highlights & Key Capabilities
-
-- **India-First Regional Nuance**:
-  - Currency in **Indian Rupees (INR ₹)** formatted via the Indian numbering system (`₹15,00,000`, `₹30,000`, `₹2,00,000`).
-  - **Wedding Sub-Events**: Custom selection for Engagement/Roka, Mehendi, Haldi/Pithi, Sangeet & Choreography, Wedding Ceremony (Muhurat/Pheras), and Reception.
-  - **Community & Festival Procedures**: Tailored for Ganesh Utsav, Navratri/Garba, Diwali Milan, and Society Annual Days with municipal/police sound permissions (10 PM sound curfew), fire-safety NOCs, and pandal/shamiana setups.
-  - **Birthdays**: Dedicated tracks for kids (magic shows, bouncy castle, theme cakes, return gifts) and adults (cocktails, live bands, lounges).
-  - **Strict Cultural & Dietary Respect**: Seamless handling of Jain, Swaminarayan, Halal, Pure Vegetarian, and regional traditions without stereotyping.
-
-- **Bulletproof Budget Rebalancing & Live Donut Chart**:
-  - Category percentages always sum strictly to 100%.
-  - Rupee amounts are computed in code via the Largest Remainder Method so that `sum(amounts) === totalBudget` down to the exact single rupee.
-  - Dragging sliders or entering rupee values auto-rebalances remaining categories proportionally in real time.
-
-- **Zero-Past Backward Timelines**:
-  - Timelines are dynamically calculated backward from the target event date.
-  - If an event is scheduled too soon, the engine automatically compresses milestones and flags a clear notice in the summary.
-
-- **Swappable LLM Architecture**:
-  - Seamlessly switch between **Anthropic Claude** (via official `@anthropic-ai/sdk`) and **Google Gemini** (via `@google/generative-ai`) using `LLM_PROVIDER=anthropic` or `gemini`.
-  - Server-side only route handlers ensure zero client-side API key exposure.
-  - Automatic retry mechanism with error correction if LLM JSON is malformed.
-  - Built-in authentic domain generator fallback ensures the app runs smoothly out of the box even before API keys are configured.
-
-- **Clean Printable PDF & WhatsApp Share**:
-  - Clean `@media print` layout formatting all 4 tabs into an executive event dossier.
-  - One-click "Share on WhatsApp" formatting an emoji-rich summary for family and committee members.
-
-- **Plan Assistant AI Chat Drawer**:
-  - Ask follow-ups ("make it 15% cheaper", "what are sound curfew rules?").
-  - Directly applies real-time updates to the active plan.
+Live Deployment: [https://eventplanner2.vercel.app](https://eventplanner2.vercel.app)  
+Repository: [https://github.com/neelvc2103-ux/Event_Management](https://github.com/neelvc2103-ux/Event_Management)
 
 ---
 
-## 🏗️ Project Architecture
+## 🎨 Brand Identity & Visual Language
+
+AYOJA combines luxury editorial aesthetics with high-precision logistical command:
+* **Brand Name**: **AYOJA** (Pronounced *uh-yoh-jah*)
+* **Tagline**: `YOUR PLANS. YOUR PEOPLE. YOUR MOMENTS.`
+* **Logo Concept**:
+  * **People Together**: Dual flowing ribbons coming together like people and traditions to form the arch of the letter **A**.
+  * **Celebration & Joy**: A radiant 4-pointed Royal Gold spark at the apex representing unforgettable memories.
+  * **Progress & Planning**: A forward-moving form symbolizing organization and flawless execution.
+* **Color Palette**:
+  * **Celebration Plum** (`#6C1D4F`): Primary luxury brand anchor
+  * **Vibrant Coral** (`#F0656B`): Radiant accent & CTA gradients
+  * **Royal Gold** (`#D4A753`): Warm metallic accent & celebration spark
+  * **Soft Blush** (`#F9E8E1`): Warm ambient canvas & subtle card borders
+  * **Midnight** (`#1F1B2E`): Deep obsidian surface & high-contrast dark mode
+* **Typography**: **Playfair Display** (Headings, wordmark & editorial titles) paired with **Inter** (Data grids, checklists & UI copy).
+
+---
+
+## ✨ Key Features & Capabilities
+
+### 1. India-First Regional Intelligence
+* **Authentic Currency & Numbering**: All budgets formatted strictly in **Indian Rupees (INR ₹)** using Indian comma separation (`₹15,00,000`, `₹2,00,000`, `₹30,000`).
+* **Wedding Ceremony Framework**: Distinct handling for multi-day ceremonies including Engagement/Roka, Mehendi, Haldi/Pithi, Sangeet & Choreography, Lagna Muhurat/Pheras, and Reception.
+* **Community & Festival Logistics**: Specialized blueprints for Ganesh Utsav, Navratri/Garba, and Society Days including municipal/police permissions, society NOCs, fire-safety clearances, and the mandatory **10:00 PM loudspeaker curfew**.
+* **Cultural & Dietary Respect**: First-class support for Jain cooking separation (root vegetable exclusion, separate halwai utensils), Pure Vegetarian, Swaminarayan, and regional cuisines.
+
+### 2. Mathematical Budget Rebalancing (Zero Drift)
+* Category percentages always sum strictly to 100%.
+* Uses the **Largest Remainder Method** to distribute whole rupees deterministically so `sum(category_amounts) === totalBudget` down to the exact rupee.
+* Dragging any category slider or editing an amount auto-rebalances remaining categories proportionally in real time.
+
+### 3. Zero-Past Backward Timelines
+* Dynamically calculates deadlines backward from the target event date.
+* If an event is scheduled on short notice, the engine compresses milestones and flags urgent tasks rather than assigning impossible historical dates.
+
+### 4. What-If Scenario & Trade-Off Simulator (Stress-Testing)
+* Interactive simulator allowing families to test stress scenarios:
+  * **+20% Market Cost Spike**: Simulates inflation across catering/decor and recommends specific cuts (e.g., floral repurposing, menu streamlining).
+  * **+50 Guest Surge**: Calculates the marginal food and seating impact and identifies buffer capacity.
+  * **-15% Budget Cut**: Shows how to gracefully reduce expenses without compromising core cultural rituals.
+
+### 5. Indicative Multi-Tier Vendor Quotation Matrix
+* Synthesizes calculated price tiers (**Standard / Value**, **Curated / Recommended**, and **Luxury Experience**) derived from regional market benchmarks.
+* Prepares families with **Negotiation Checklists**, audits typical hidden fees (generator fuel, overtime post 10 PM, GST), and provides questions to ask before signing contracts.
+* *(Note: Quotes are comparative model benchmarks to aid procurement decisions rather than live third-party marketplace feeds).*
+
+### 6. One-Click Editorial PDF & Print Dossier
+* Generates high-fidelity printable executive handouts for:
+  * **Family Elders / Treasurers**: Multi-tranche payment ledger (Advance, Mid-Way, Final Delivery) and budget breakdown.
+  * **Venue & Operations Managers**: Day-of contact directory, sound curfew sign-off, and emergency kit checklist.
+
+### 7. Interactive WhatsApp RSVP & Pass Dispatcher
+* Generates pre-filled WhatsApp invitation text with personalized links for guests.
+* Directs attendees to web-based credentials and dietary preference confirmations.
+
+### 8. Strictly Optional VIP Gate Passes & Badges
+* VIP access badges and QR credentials are treated as an **opt-in feature** (`+ Need VIP Pass? (Optional)`).
+* Only renders when requested by the host for reserved seating, priority car parking, and elder access.
+
+### 9. Dual Persistence: LocalStorage + Cloud Database
+* Works out-of-the-box using browser `localStorage` for offline convenience.
+* Supports saving multiple plans and sharing unique private cloud URLs with co-planners via PostgreSQL (Supabase / Vercel Postgres).
+
+---
+
+## 🤖 Gen AI Architecture & Integration
 
 ```
-PromptWars/
+AYOJA Client (Next.js 14 App Router)
+   │
+   ├── POST /api/plan          ──► Validates inputs with Zod
+   ├── POST /api/chat          ──► Conversational assistant (<PLAN_UPDATE> patcher)
+   ├── POST /api/regenerate    ──► Regenerates discrete creative ideas
+   │
+Server-Side Execution Layer (lib/llmClient.ts)
+   │
+   ├── Swappable Provider Bridge:
+   │     ├── Google Gemini SDK (@google/generative-ai) -> gemini-1.5-pro / gemini-1.5-flash
+   │     └── Anthropic Claude SDK (@anthropic-ai/sdk)  -> claude-3-5-sonnet-20241022
+   │
+   ├── Self-Correcting Retry Loop:
+   │     If output JSON is malformed, catches error and re-prompts with exact validation delta
+   │
+   ├── Deterministic Post-Processing:
+   │     Overrides LLM arithmetic: Normalizes percentages and recalculates exact rupee amounts
+   │     Clamps timeline dates to eliminate zero-past anomalies
+   │
+   └── Offline Fallback Engine (lib/mockPlanGenerator.ts):
+         Provides realistic, culturally rich plans when running without external API keys
+```
+
+### Prompt Engineering Highlights
+* **Strict JSON Mode**: Enforces pure RFC-8259 JSON output without markdown fences.
+* **Tier-Based Pricing Rules**: Calibrates vendor rates against Indian city tiers (Tier 1 metros vs Tier 2/3 towns).
+* **Conversational Patching**: The AI chat assistant outputs conversational guidance alongside an optional `<PLAN_UPDATE>{...}</PLAN_UPDATE>` JSON payload that automatically updates the active plan in state.
+
+---
+
+## 🛠️ Project Structure
+
+```
 ├── app/
 │   ├── api/
-│   │   ├── plan/route.ts        # POST: Validates form & generates full event plan
-│   │   ├── regenerate/route.ts  # POST: Regenerates specific idea section
-│   │   └── chat/route.ts        # POST: Conversational planning assistant & updates
-│   ├── globals.css              # Warm festive Indian palette & print styles
-│   ├── layout.tsx               # Root layout with Outfit & Inter typography
-│   └── page.tsx                 # Main application state machine & controller
+│   │   ├── chat/route.ts        # Conversational AI assistant endpoint
+│   │   ├── plan/route.ts        # Primary event plan generation endpoint
+│   │   ├── regenerate/route.ts  # Creative section regeneration endpoint
+│   │   └── share/route.ts       # Cloud plan persistence & retrieval endpoint
+│   ├── globals.css              # AYOJA theme tokens & print stylesheets
+│   ├── layout.tsx               # Root layout, Playfair & Inter font loading
+│   └── page.tsx                 # View state machine (landing, form, loading, plan)
 ├── components/
-│   ├── tabs/
-│   │   ├── BudgetTab.tsx        # Recharts Donut chart & auto-rebalancing sliders
-│   │   ├── TimelineTab.tsx      # Countdown, task checklists & overdue flags
-│   │   ├── VendorsTab.tsx       # Actual spend vs estimate & booked toggles
-│   │   └── IdeasTab.tsx         # Themes, regional menu, decor & regeneration
+│   ├── AyojaLogo.tsx            # Precision vector SVG mark & wordmark
+│   ├── Navbar.tsx               # Navigation, Home button, plans drawer, theme toggle
+│   ├── LandingHero.tsx          # Pitch, sample scenarios & FAQ accordion
+│   ├── MultiStepForm.tsx        # 3-step planning wizard with Indian presets
+│   ├── LoadingPlanState.tsx     # Skeleton UI with rotating cultural status messages
+│   ├── PlanDashboard.tsx        # Executive command center & KPI headers
+│   ├── TradeOffSimulatorModal.tsx # What-if simulator (+20% spike, +50 guests)
+│   ├── VendorQuotationModal.tsx # Indicative 3-tier price quotes & negotiation prep
+│   ├── EditorialPdfExportModal.tsx # Printable ledger for elders & venue managers
+│   ├── WhatsAppRsvpDispatcher.tsx # Interactive WhatsApp invite generator
+│   ├── DigitalPassModal.tsx     # Optional VIP badge & QR credential viewer
 │   ├── ChatDrawer.tsx           # Interactive AI assistant drawer
-│   ├── LandingHero.tsx          # Pitch, primary CTA & 1-click test scenarios
-│   ├── LoadingPlanState.tsx     # Skeleton UI with rotating Indian status messages
-│   ├── MultiStepForm.tsx        # 3-step form with progress bar and presets
-│   ├── Navbar.tsx               # Branding, dark mode toggle & saved plans count
-│   └── SavedPlansDrawer.tsx     # LocalStorage drawer to manage, load & delete plans
+│   └── tabs/
+│       ├── BudgetTab.tsx        # Recharts Donut chart & auto-rebalancing sliders
+│       ├── TimelineTab.tsx      # Backward timeline with overdue warnings
+│       ├── VendorsTab.tsx       # Vendor status, milestones & quotation triggers
+│       ├── IdeasTab.tsx         # Themes, regional dining & decor styling
+│       └── OperationsTab.tsx    # Run-of-show schedule, sound curfew & gate desk
+├── database/
+│   └── schema.sql               # PostgreSQL schema for cloud persistence
 ├── lib/
-│   ├── budgetMath.ts            # Mathematical rebalancing & exact rupee distribution
-│   ├── dateUtils.ts             # Backward timeline date calculation & compression
-│   ├── formatters.ts            # Indian currency (INR ₹) & date formatters
-│   ├── llmClient.ts             # Swappable Anthropic Claude / Google Gemini client
-│   ├── mockPlanGenerator.ts     # Authentic India-first domain generator
-│   ├── prompts.ts               # Domain-specific Indian event prompts
-│   ├── rateLimit.ts             # IP-based rate limiting & input sanitization
-│   ├── schemas.ts               # Zod validation schemas for form & LLM output
-│   ├── storage.ts               # LocalStorage persistence & sample inputs
-│   └── utils.ts                 # Tailwind cn merge utility
-├── tests/
-│   ├── budgetMath.test.ts       # Vitest tests for budget math & exact sum
-│   └── dateUtils.test.ts        # Vitest tests for backward dates & compression
-├── .env.example
-├── package.json
-├── tailwind.config.ts
-└── tsconfig.json
+│   ├── budgetMath.ts            # Largest Remainder Method financial redistribution
+│   ├── dateUtils.ts             # Backward timeline calculation & temporal clamping
+│   ├── formatters.ts            # Indian currency (₹) & date formatters
+│   ├── llmClient.ts             # Multi-provider LLM client with self-correcting retry
+│   ├── mockPlanGenerator.ts     # Offline domain generator
+│   ├── prompts.ts               # Domain-specific prompt definitions
+│   └── schemas.ts               # Zod validation schemas
+└── tests/                       # 46 Vitest unit tests (budget math, dates, schemas)
 ```
 
 ---
 
-## 🚀 Quickstart & Local Setup
+## 🚀 Getting Started
 
-### 1. Prerequisites
-- **Node.js**: v18.17.0 or later (v20+ recommended)
-- **npm** or **pnpm**
+### Prerequisites
+* Node.js 18.17+ or 20+
+* npm or pnpm or yarn
 
-### 2. Clone & Install Dependencies
+### 1. Clone & Install
 ```bash
+git clone https://github.com/neelvc2103-ux/Event_Management.git
+cd Event_Management
 npm install
 ```
 
-### 3. Configure Environment Variables
+### 2. Environment Configuration (Optional)
 Copy `.env.example` to `.env.local`:
 ```bash
 cp .env.example .env.local
 ```
 
-Edit `.env.local` to configure your preferred LLM provider:
+Configure your preferred LLM provider:
 ```env
-# Choose 'anthropic' or 'gemini'
-LLM_PROVIDER=anthropic
-
-# Anthropic Claude Configuration
-ANTHROPIC_API_KEY=your_claude_api_key_here
-LLM_MODEL=claude-3-5-sonnet-20241022
-
-# Google Gemini Configuration (if using LLM_PROVIDER=gemini)
+# Choose 'anthropic' or 'gemini' (Defaults to offline generator if omitted)
+LLM_PROVIDER=gemini
 GEMINI_API_KEY=your_gemini_api_key_here
-GEMINI_MODEL=gemini-1.5-pro
-```
-*(Note: If no API keys are provided, EventCraft automatically uses its intelligent India-first fallback generator, allowing you to run and test all features instantly!)*
+GEMINI_MODEL=gemini-1.5-flash
 
-### 4. Run Development Server
+# OR Anthropic:
+# LLM_PROVIDER=anthropic
+# ANTHROPIC_API_KEY=your_anthropic_api_key_here
+# LLM_MODEL=claude-3-5-sonnet-20241022
+
+# Optional Cloud Database (Supabase / Vercel Postgres)
+# POSTGRES_URL=postgres://...
+```
+
+*(Note: If no API keys are provided, AYOJA automatically uses its intelligent India-first fallback generator, allowing you to run and test all features instantly without configuration).*
+
+### 3. Run Development Server
 ```bash
 npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 5. Run Unit Tests
+### 4. Run Test Suite
 ```bash
-npm test
+npx vitest run
 ```
-Runs the Vitest test suite for budget math rebalancing and backward timeline date calculations.
+Runs all 46 unit tests covering budget mathematics, zero-past date calculations, rate limiting, and Zod schemas.
 
----
-
-## 🚢 Deploying to Vercel
-
-1. Push your code to a GitHub repository.
-2. Go to [Vercel](https://vercel.com/) and click **"Add New Project"**.
-3. Import the repository. Next.js App Router will be detected automatically.
-4. In the **Environment Variables** section, add:
-   - `LLM_PROVIDER`: `anthropic` (or `gemini`)
-   - `ANTHROPIC_API_KEY`: your Anthropic API Key
-   - `LLM_MODEL`: `claude-3-5-sonnet-20241022`
-   - *(Optional for Gemini)*: `GEMINI_API_KEY`, `GEMINI_MODEL`
-5. Click **Deploy**. Your app is live with full production edge routing!
-
----
-
-## 🧪 3 Sample Test Inputs & Expected Output Shapes
-
-### Scenario 1: Gujarati Wedding in Bhuj (₹15 Lakhs)
-**Input Data:**
-```json
-{
-  "eventType": "wedding",
-  "eventName": "Aarav & Diya’s Gujarati Wedding",
-  "eventDate": "2027-02-25",
-  "guestCount": 350,
-  "city": "Bhuj, Gujarat",
-  "totalBudget": 1500000,
-  "venueType": "banquet_hall",
-  "vibe": "Traditional Gujarati elegance with vibrant Dandiya Sangeet, Jain catering, and royal mandap setup.",
-  "presetVibes": ["Traditional", "Royal", "Fun"],
-  "weddingSubEvents": ["engagement", "mehendi", "haldi", "sangeet", "wedding_ceremony", "reception"],
-  "mustHaves": "Strict pure-vegetarian & Jain food counters, authentic live Dhol-Tasha, and grand Toran mandap entry.",
-  "culturalPreferences": "Gujarati traditions (Lagna Geet, Hastamelap, Kanya Daan), auspicious afternoon muhurat."
-}
+### 5. Production Build
+```bash
+npm run build
+npm run start
 ```
-**Expected Output Highlights:**
-- **Budget**: Catering & Shahi Bhojan (35% = ₹5,25,000), Venue (22% = ₹3,30,000), Decor & Mandap (15% = ₹2,25,000), Photography (10% = ₹1,50,000), Panditji & Samagri (3% = ₹45,000). Total sums to exactly ₹15,00,000.
-- **Vendors**: Halwai with Jain cooking separation, Panditji for Vedic Muhurat, Candid photographer, Dhol-Tasha troupe.
-- **Menu**: Live Chaat Bazaar (Sev Puri, Dal Pakwan), Gujarati Kadhi, Puran Poli, Jalebi-Rabri, Kesar Thandai.
 
 ---
 
-### Scenario 2: Kid's 5th Birthday in Pune (₹30,000)
-**Input Data:**
-```json
-{
-  "eventType": "birthday",
-  "eventName": "Reyansh’s 5th Jungle Safari Birthday",
-  "eventDate": "2026-11-20",
-  "guestCount": 40,
-  "city": "Pune",
-  "totalBudget": 30000,
-  "venueType": "society_ground",
-  "vibe": "Fun, colorful Jungle Safari with balloon animals, live games, and cartoon mascot.",
-  "presetVibes": ["Fun", "Modern"],
-  "birthdayCategory": "kids",
-  "mustHaves": "2-tier eggless jungle animal cake, interactive magic show, and animal-themed return hampers."
-}
-```
-**Expected Output Highlights:**
-- **Budget**: Kid Snacks & Food (38% = ₹11,400), Theme Decor & Balloon Arch (22% = ₹6,600), Custom Designer Cake (12% = ₹3,600), Magic Show & Games Host (12% = ₹3,600), Return Gifts (10% = ₹3,000), Venue Setup (6% = ₹1,800). Total sums to exactly ₹30,000.
-- **Timeline**: Fast-track timeline within 25 days avoiding past dates.
-- **Vendors**: Home baker for eggless theme cake, balloon artist, comedy magician.
+## ⚖️ Transparent Data & Modeling Disclaimers
+
+1. **Regional Reference Dataset**: Vendor directories, catering estimates, and venue options are drawn from AYOJA's built-in regional planning reference benchmarks (covering major Indian cities including Bhuj, Mumbai, Pune, Ahmedabad, Jaipur, and Delhi NCR) rather than a live third-party marketplace API.
+2. **Indicative Quotation Models**: The Vendor Quotation Matrix provides calculated market-rate tiers (Standard, Recommended, Luxury) designed to illustrate comparative procurement trade-offs and common hidden fees. These are planning benchmarks to prepare families for negotiations before formal supplier quotes are solicited.
+3. **Sound Curfew Guidelines**: Noise restrictions and police permission reminders are based on standard Indian municipal regulations (e.g., Supreme Court of India 10:00 PM loudspeaker guideline). Always consult local police stations and municipal wards for designated festive exemptions.
 
 ---
 
-### Scenario 3: Society Ganesh Utsav in Mumbai (₹2 Lakhs)
-**Input Data:**
-```json
-{
-  "eventType": "community",
-  "eventName": "Gokuldham Society Ganesh Utsav 2026",
-  "eventDate": "2026-12-10",
-  "guestCount": 500,
-  "city": "Mumbai",
-  "totalBudget": 200000,
-  "venueType": "society_ground",
-  "vibe": "Vibrant spiritual festivities, eco-friendly Clay Ganesha, daily cultural Aarti, and grand Mahaprasad.",
-  "presetVibes": ["Traditional", "Eco-friendly"],
-  "communityType": "ganesh_utsav",
-  "mustHaves": "Eco-friendly Shadu Mati idol, BMC & Police sound permission clearance, fire extinguishers, and silent generator.",
-  "notes": "Need strict adherence to 10:00 PM police sound curfew."
-}
-```
-**Expected Output Highlights:**
-- **Budget**: Waterproof Pandal & Stage (28% = ₹56,000), Decibel-compliant Sound & Silent DG Generator (20% = ₹40,000), Mahaprasad & Bhandara (22% = ₹44,000), Eco-Murti & Daily Garlands (14% = ₹28,000), Police/BMC Permissions & Security (8% = ₹16,000), Cultural Prizes (8% = ₹16,000). Total sums to exactly ₹2,00,000.
-- **Checklist**: Municipal ward structure clearance, local police sound curfew NOC, certified fire extinguishers, biodegradable leaf plates (pattals).
-
----
-
-## 📐 Design Decisions & Architectural Rationale
-
-1. **Client vs Server Boundary**:
-   - All AI interactions and API keys stay exclusively on the server in Next.js App Router handlers (`app/api/*`). Zero credentials ever touch the client bundle.
-2. **Deterministic Financial Math**:
-   - LLMs are notoriously imprecise with floating point arithmetic. Rather than trusting the model's budget arithmetic, the server extracts normalized percentages and recomputes exact rupee amounts in TypeScript using the Largest Remainder Method, ensuring not a single rupee is lost or duplicated.
-3. **Timeline Temporal Integrity**:
-   - Dates calculated backward from the event date are clamped against `new Date()`. When the remaining window is compressed, tasks are redistributed smoothly so the user never receives a task due yesterday.
-4. **Resilient User Experience**:
-   - 1-click sample templates enable users to test and inspect the full dashboard in under 60 seconds without having to type form data manually or wait for cold starts.
-#   E v e n t _ M a n a g e m e n t  
- 
+## 📄 License
+This project is open-source and available under the [MIT License](LICENSE).

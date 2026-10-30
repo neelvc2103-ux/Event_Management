@@ -93,7 +93,10 @@ async function callGemini(systemPrompt: string, userPrompt: string): Promise<str
  * Executes a call to the active LLM provider (Anthropic by default, or Gemini)
  */
 async function executeLlmCall(systemPrompt: string, userPrompt: string): Promise<string> {
-  const provider = (process.env.LLM_PROVIDER || 'anthropic').toLowerCase();
+  const provider = (
+    process.env.LLM_PROVIDER ||
+    (process.env.GEMINI_API_KEY && !process.env.ANTHROPIC_API_KEY ? 'gemini' : 'anthropic')
+  ).toLowerCase();
 
   if (provider === 'gemini') {
     return callGemini(systemPrompt, userPrompt);
