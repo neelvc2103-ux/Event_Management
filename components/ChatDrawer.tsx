@@ -228,7 +228,7 @@ export function ChatDrawer({ plan, onApplyPlanUpdate }: ChatDrawerProps) {
           {isLoading && (
             <div className="flex items-center gap-2 text-xs text-muted-foreground p-3 rounded-xl bg-muted/40 animate-pulse">
               <Loader2 className="w-4 h-4 animate-spin text-primary" />
-              <span>EventCraft is thinking & consulting regional guidelines...</span>
+              <span>AYOJA is thinking & consulting regional guidelines...</span>
             </div>
           )}
 

@@ -24,9 +24,17 @@ interface OperationsTabProps {
   plan: EventPlan;
   onUpdatePlan: (updatedPlan: EventPlan) => void;
   onOpenDigitalPass: () => void;
+  includeVipPasses?: boolean;
+  onToggleVip?: () => void;
 }
 
-export function OperationsTab({ plan, onUpdatePlan, onOpenDigitalPass }: OperationsTabProps) {
+export function OperationsTab({
+  plan,
+  onUpdatePlan,
+  onOpenDigitalPass,
+  includeVipPasses = false,
+  onToggleVip,
+}: OperationsTabProps) {
   const [filterRole, setFilterRole] = useState<'all' | 'pending' | 'completed'>('all');
 
   const runOfShow = plan.runOfShow || [];
@@ -84,33 +92,67 @@ export function OperationsTab({ plan, onUpdatePlan, onOpenDigitalPass }: Operati
           </p>
         </div>
 
-        <div className="p-5 rounded-2xl border-2 border-amber-500/40 bg-gradient-to-br from-card via-card to-amber-500/10 shadow-md flex flex-col justify-between space-y-3">
-          <div className="flex items-start justify-between">
+        {includeVipPasses ? (
+          <div className="p-5 rounded-2xl border-2 border-amber-500/40 bg-gradient-to-br from-card via-card to-amber-500/10 shadow-md flex flex-col justify-between space-y-3">
+            <div className="flex items-start justify-between">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-500/30">
+                  Gate & Security Desk (Active)
+                </span>
+                <h4 className="text-lg font-black text-foreground mt-1 flex items-center gap-1.5">
+                  <Ticket className="w-4 h-4 text-amber-500" />
+                  <span>VIP Gate Pass & Access Badge</span>
+                </h4>
+                <p className="text-xs text-muted-foreground">Scannable QR credentials for family elders & guests</p>
+              </div>
+              <span className="text-xs font-mono font-bold text-amber-600 bg-amber-500/10 px-2 py-1 rounded-lg">
+                AYOJA-{plan.id.slice(-6).toUpperCase()}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2 pt-1">
+              <button
+                onClick={onOpenDigitalPass}
+                className="flex-1 py-2 px-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-1.5 hover:scale-105 active:scale-95"
+              >
+                <Ticket className="w-3.5 h-3.5" />
+                <span>Preview VIP Badge</span>
+              </button>
+              {onToggleVip && (
+                <button
+                  onClick={onToggleVip}
+                  className="py-2 px-3 rounded-xl border border-border bg-card hover:bg-muted text-xs text-muted-foreground font-semibold transition-all"
+                  title="Disable VIP Passes if not required"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="p-5 rounded-2xl border border-border bg-card shadow-sm flex flex-col justify-between space-y-3">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-500/30">
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
                 Gate & Security Desk
               </span>
               <h4 className="text-lg font-black text-foreground mt-1 flex items-center gap-1.5">
-                <Ticket className="w-4 h-4 text-amber-500" />
-                <span>VIP Gate Pass & Access Badge</span>
+                <UserCheck className="w-4 h-4 text-primary" />
+                <span>Standard Guest List Check-in</span>
               </h4>
-              <p className="text-xs text-muted-foreground">Scannable QR credentials for family elders & guests</p>
+              <p className="text-xs text-muted-foreground">Digital RSVP verification at venue entrance</p>
             </div>
-            <span className="text-xs font-mono font-bold text-amber-600 bg-amber-500/10 px-2 py-1 rounded-lg">
-              EC-{plan.id.slice(-6).toUpperCase()}
-            </span>
+            {onToggleVip && (
+              <button
+                onClick={onToggleVip}
+                className="w-full py-2 px-3 rounded-xl border border-dashed border-primary/40 hover:border-primary bg-primary/5 hover:bg-primary/10 text-primary font-bold text-xs transition-all flex items-center justify-center gap-1.5"
+                title="Only enable VIP passes if requested by customer"
+              >
+                <Ticket className="w-3.5 h-3.5" />
+                <span>+ Need VIP Badges & Passes? (Optional)</span>
+              </button>
+            )}
           </div>
-
-          <div className="flex items-center gap-2 pt-1">
-            <button
-              onClick={onOpenDigitalPass}
-              className="flex-1 py-2 px-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-1.5 hover:scale-105 active:scale-95"
-            >
-              <Ticket className="w-3.5 h-3.5" />
-              <span>Preview VIP Badge</span>
-            </button>
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Main Grid: Run-of-Show Timeline & Day-of Kit */}

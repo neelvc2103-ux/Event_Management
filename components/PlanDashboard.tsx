@@ -24,6 +24,7 @@ import {
   AlertTriangle,
   Compass,
   Scale,
+  Home,
 } from 'lucide-react';
 import { EventPlan, BudgetData, TimelineTask, VendorItem, IdeaSectionKey } from '@/types';
 import { formatINR, formatDate, getDaysRemaining } from '@/lib/formatters';
@@ -44,14 +45,16 @@ interface PlanDashboardProps {
   plan: EventPlan;
   onUpdatePlan: (updatedPlan: EventPlan) => void;
   onEditForm: () => void;
+  onGoHome?: () => void;
 }
 
-export function PlanDashboard({ plan, onUpdatePlan, onEditForm }: PlanDashboardProps) {
+export function PlanDashboard({ plan, onUpdatePlan, onEditForm, onGoHome }: PlanDashboardProps) {
   const [activeTab, setActiveTab] = useState<'budget' | 'timeline' | 'vendors' | 'ideas' | 'operations'>('budget');
   const [copiedShare, setCopiedShare] = useState(false);
   const [showFullSummary, setShowFullSummary] = useState(false);
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const [isPassModalOpen, setIsPassModalOpen] = useState(false);
+  const [includeVipPasses, setIncludeVipPasses] = useState(false);
   const [isElderPdfOpen, setIsElderPdfOpen] = useState(false);
   const [isWaDispatcherOpen, setIsWaDispatcherOpen] = useState(false);
   const [isTradeOffOpen, setIsTradeOffOpen] = useState(false);
@@ -183,7 +186,7 @@ export function PlanDashboard({ plan, onUpdatePlan, onEditForm }: PlanDashboardP
       '',
       `🤝 *Vendors Status:* ${plan.vendors.filter((v) => v.isBooked).length}/${plan.vendors.length} Booked`,
       '',
-      `Plan generated via *EventCraft* 🇮🇳`,
+      `Plan generated via *AYOJA* 🇮🇳`,
     ];
 
     const shareText = lines.join('\n');
@@ -235,14 +238,49 @@ export function PlanDashboard({ plan, onUpdatePlan, onEditForm }: PlanDashboardP
 
             {/* Quick Action Buttons */}
             <div className="flex flex-wrap items-center gap-2 no-print">
-              <button
-                onClick={() => setIsPassModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-accent to-amber-600 text-amber-950 text-xs font-black shadow-lg shadow-amber-500/20 hover:brightness-110 transition-all hover:scale-105 active:scale-95 border border-amber-400"
-                title="View Scannable VIP Family Pass & QR Badge"
-              >
-                <Ticket className="w-4 h-4 text-amber-950 animate-pulse" />
-                <span>🎟️ VIP Pass & Badge</span>
-              </button>
+              {onGoHome && (
+                <button
+                  onClick={onGoHome}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-border bg-card hover:bg-muted text-foreground text-xs font-semibold shadow-sm transition-all hover:scale-105 active:scale-95"
+                  title="Return to Main Landing Page"
+                >
+                  <Home className="w-4 h-4 text-primary" />
+                  <span>Home</span>
+                </button>
+              )}
+
+              {/* VIP Pass Button - ONLY IF CUSTOMER NEEDS IT (OPT-IN) */}
+              {!includeVipPasses ? (
+                <button
+                  onClick={() => {
+                    setIncludeVipPasses(true);
+                    setIsPassModalOpen(true);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-dashed border-border hover:border-accent bg-card hover:bg-muted/70 text-xs font-semibold text-muted-foreground hover:text-foreground transition-all active:scale-95"
+                  title="Optional: Enable digital QR badges & VIP family access passes"
+                >
+                  <Ticket className="w-3.5 h-3.5 text-accent" />
+                  <span>+ Need VIP Pass?</span>
+                </button>
+              ) : (
+                <div className="inline-flex items-center rounded-xl border border-amber-400/60 bg-amber-500/10 p-0.5 shadow-sm">
+                  <button
+                    onClick={() => setIsPassModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gradient-to-r from-amber-500 via-accent to-amber-600 text-amber-950 text-xs font-black shadow-sm hover:brightness-110 transition-all hover:scale-105 active:scale-95"
+                    title="View Scannable VIP Family Pass & QR Badge"
+                  >
+                    <Ticket className="w-3.5 h-3.5 text-amber-950 animate-pulse" />
+                    <span>🎟️ VIP Pass Active</span>
+                  </button>
+                  <button
+                    onClick={() => setIncludeVipPasses(false)}
+                    className="px-2 py-2 text-[11px] text-amber-900 dark:text-amber-200 hover:opacity-75 font-black"
+                    title="Deactivate VIP Pass (Customer doesn't need it)"
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
 
               <button
                 onClick={() => setIsWaDispatcherOpen(true)}
@@ -717,6 +755,8 @@ export function PlanDashboard({ plan, onUpdatePlan, onEditForm }: PlanDashboardP
               plan={plan}
               onUpdatePlan={onUpdatePlan}
               onOpenDigitalPass={() => setIsPassModalOpen(true)}
+              includeVipPasses={includeVipPasses}
+              onToggleVip={() => setIncludeVipPasses(!includeVipPasses)}
             />
           )}
         </div>

@@ -1,6 +1,6 @@
 import { EventFormData, IdeaSectionKey } from '@/types';
 
-export const SYSTEM_PROMPT = `You are "EventCraft", an elite Indian event planning director and budgeting expert with deep regional expertise in weddings, birthdays, and community festivals across India.
+export const SYSTEM_PROMPT = `You are "AYOJA", an elite Indian event planning director and budgeting expert with deep regional expertise in weddings, birthdays, and community festivals across India. Tagline: "Your plans. Your people. Your moments."
 
 You must generate an authentic, hyper-realistic, culturally nuanced, and structurally sound event plan tailored to the user's city, budget, guest count, and preferences.
 
@@ -139,7 +139,7 @@ export function buildRegeneratePrompt(
   eventType: string,
   userFeedback?: string
 ): string {
-  return `You are EventCraft's creative director.
+  return `You are AYOJA's creative director.
 Regenerate ONLY the "${section}" section of the event ideas for an Indian ${eventType}.
 
 Context:
@@ -157,7 +157,7 @@ ${
 Output JSON only without backticks or markdown fences.`;
 }
 
-export const CHAT_SYSTEM_PROMPT = `You are EventCraft's Indian Event Planning Assistant.
+export const CHAT_SYSTEM_PROMPT = `You are AYOJA's Indian Event Planning Assistant. Tagline: "Your plans. Your people. Your moments."
 The user is viewing their active event plan. They might ask questions like:
 - "Can you make the budget cheaper by 20%?"
 - "Add a Mehendi ceremony and update the vendor checklist"

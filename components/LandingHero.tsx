@@ -24,20 +24,20 @@ import {
 } from 'lucide-react';
 import { SAMPLE_INPUTS } from '@/lib/storage';
 import { CURATED_VISUALS } from '@/lib/visualAssets';
+import { AyojaLogo } from './AyojaLogo';
 
 interface LandingHeroProps {
   onStartPlanning: () => void;
   onSelectSample: (sampleKey: keyof typeof SAMPLE_INPUTS) => void;
-  onOpenVipPass?: () => void;
 }
 
-export function LandingHero({ onStartPlanning, onSelectSample, onOpenVipPass }: LandingHeroProps) {
+export function LandingHero({ onStartPlanning, onSelectSample }: LandingHeroProps) {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const faqs = [
     {
-      q: 'How does EventCraft handle real-world Indian vendors and locations?',
-      a: 'EventCraft is powered by a verified regional database covering popular localities across major Indian cities (Bhuj, Mumbai, Pune, Ahmedabad, Jaipur, Delhi NCR, and more). It links to real banquet halls, verified caterers with FSSAI certifications, local wholesale flower markets, and local municipal & police sound curfew guidelines.',
+      q: 'How does AYOJA handle real-world Indian vendors and locations?',
+      a: 'AYOJA is powered by a verified regional database covering popular localities across major Indian cities (Bhuj, Mumbai, Pune, Ahmedabad, Jaipur, Delhi NCR, and more). It links to real banquet halls, verified caterers with FSSAI certifications, local wholesale flower markets, and local municipal & police sound curfew guidelines.',
     },
     {
       q: 'Will budget adjustments break my total fund?',
@@ -53,6 +53,11 @@ export function LandingHero({ onStartPlanning, onSelectSample, onOpenVipPass }: 
     <div className="relative overflow-hidden py-8 sm:py-16 space-y-16">
       {/* 1. HERO SECTION (AuraWed High-End Editorial Style) */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center space-y-8">
+        {/* Ayoja Brand Crest & Tagline */}
+        <div className="flex flex-col items-center justify-center gap-2 pt-2 animate-fade-in">
+          <AyojaLogo size="xl" showWordmark={true} showTagline={true} />
+        </div>
+
         {/* Subtle pill badge */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/15 border border-accent/30 text-accent-foreground text-xs sm:text-sm font-semibold shadow-sm animate-fade-in">
           <Sparkles className="w-4 h-4 text-accent" />
@@ -91,17 +96,6 @@ export function LandingHero({ onStartPlanning, onSelectSample, onOpenVipPass }: 
             <span>Explore Royal Wedding Sample</span>
             <ChevronRight className="w-4 h-4 text-primary" />
           </button>
-
-          {onOpenVipPass && (
-            <button
-              onClick={onOpenVipPass}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl border-2 border-amber-500/40 bg-gradient-to-r from-amber-500/10 via-card to-accent/10 hover:border-amber-500 text-amber-900 dark:text-amber-200 text-sm font-bold shadow-md transition-all hover:scale-105 active:scale-95"
-              title="Preview Scannable VIP Family Pass & QR Badge"
-            >
-              <Ticket className="w-4 h-4 text-amber-500 animate-pulse" />
-              <span>🎟️ Preview VIP Pass & Badge</span>
-            </button>
-          )}
         </div>
 
         {/* Visual Editorial Photo Showcase Collage */}
@@ -214,22 +208,12 @@ export function LandingHero({ onStartPlanning, onSelectSample, onOpenVipPass }: 
             </p>
           </div>
 
-          <div
-            onClick={onOpenVipPass}
-            className="p-6 rounded-3xl border border-amber-500/40 bg-card hover:border-amber-500 hover:shadow-lg transition-all cursor-pointer space-y-3 relative overflow-hidden group"
-            title="Click to preview the live VIP Pass & Badge"
-          >
-            <span className="text-3xl font-serif font-black text-amber-500/40 block">04/</span>
-            <h3 className="text-base font-bold text-foreground flex items-center justify-between">
-              <span>Live Run-of-Show & Passes</span>
-              <Ticket className="w-4 h-4 text-amber-500 group-hover:scale-110 transition-transform" />
-            </h3>
+          <div className="p-6 rounded-3xl border border-border bg-card shadow-sm space-y-3 relative overflow-hidden">
+            <span className="text-3xl font-serif font-black text-accent/40 block">04/</span>
+            <h3 className="text-base font-bold text-foreground">Live Run-of-Show & Ops</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Hour-by-hour operational coordination, digital VIP passes with gate QR codes, and day-of family survival kits.
+              Hour-by-hour operational coordination, guest hospitality stats, family coordinator contacts, and day-of emergency kits.
             </p>
-            <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1 group-hover:underline pt-1">
-              Click to preview live VIP pass & badge →
-            </span>
           </div>
         </div>
       </div>
@@ -371,7 +355,7 @@ export function LandingHero({ onStartPlanning, onSelectSample, onOpenVipPass }: 
           </div>
 
           <p className="text-base sm:text-xl font-serif italic text-foreground leading-relaxed max-w-2xl mx-auto">
-            “Working with EventCraft felt completely effortless. Every detail was intentional, culturally authentic to our family traditions, and kept us within our exact ₹15 Lakhs budget without a single surprise fee.”
+            “Working with AYOJA felt completely effortless. Every detail was intentional, culturally authentic to our family traditions, and kept us within our exact ₹15 Lakhs budget without a single surprise fee.”
           </p>
 
           <div className="pt-2">

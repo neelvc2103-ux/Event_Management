@@ -147,7 +147,7 @@ export function BudgetTab({ budget, onUpdateBudget, onOpenTradeOffModal }: Budge
             </span>
           </div>
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-            Drag any slider or type an amount. EventCraft instantly redistributes the remaining funds across all other categories so your total budget of{' '}
+            Drag any slider or type an amount. AYOJA instantly redistributes the remaining funds across all other categories so your total budget of{' '}
             <strong className="text-foreground">{formatINR(budget.total)}</strong> never drifts.
           </p>
 

@@ -7,17 +7,18 @@ const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-serif' });
 
 export const metadata: Metadata = {
-  title: 'EventCraft - Ultra-Luxury & Precision Event Planning Command Center',
+  title: 'AYOJA - Your Plans. Your People. Your Moments.',
   description:
-    'Deeply architectural, real-world Indian event planning: Verified venues, real vendor contacts, INR budget rebalancing, and live day-of execution run-of-show.',
+    'AYOJA: Luxury & Precision Indian Event Planning Command Center. Plan beautifully, celebrate effortlessly with verified venues, real vendor contacts, INR budget rebalancing, and live day-of execution run-of-show.',
   keywords: [
+    'AYOJA',
+    'Ayoja Event Planner',
     'Indian wedding planner',
     'Event planner AI',
     'Ganesh Utsav planning',
     'Indian birthday party',
     'Wedding budget calculator INR',
-    'EventCraft',
-    'MeetCraft event command center',
+    'Ayoja command center',
   ],
 };
 

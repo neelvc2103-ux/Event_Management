@@ -9,7 +9,6 @@ import { LoadingPlanState } from '@/components/LoadingPlanState';
 import { PlanDashboard } from '@/components/PlanDashboard';
 import { SavedPlansDrawer } from '@/components/SavedPlansDrawer';
 import { DigitalPassModal } from '@/components/DigitalPassModal';
-import { SubmissionGuideModal } from '@/components/SubmissionGuideModal';
 import { decodeShareTokenToPlan } from '@/lib/shareUtils';
 import { EventFormData, EventPlan } from '@/types';
 import {
@@ -28,7 +27,6 @@ export default function Home() {
   const [formPrefill, setFormPrefill] = useState<EventFormData | null>(null);
   const [isSavedDrawerOpen, setIsSavedDrawerOpen] = useState(false);
   const [isGlobalPassOpen, setIsGlobalPassOpen] = useState(false);
-  const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [sharedNotice, setSharedNotice] = useState<string | null>(null);
   const [darkMode, setDarkMode] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -209,10 +207,9 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       {/* Top Navigation */}
       <Navbar
+        onGoHome={() => setView('landing')}
         onOpenSavedPlans={() => setIsSavedDrawerOpen(true)}
         onNewPlan={handleStartPlanning}
-        onOpenVipPass={() => setIsGlobalPassOpen(true)}
-        onOpenGuide={() => setIsGuideOpen(true)}
         savedPlansCount={plans.length}
         darkMode={darkMode}
         onToggleDarkMode={toggleDarkMode}
@@ -255,7 +252,6 @@ export default function Home() {
           <LandingHero
             onStartPlanning={handleStartPlanning}
             onSelectSample={handleSelectSample}
-            onOpenVipPass={() => setIsGlobalPassOpen(true)}
           />
         )}
 
@@ -280,6 +276,7 @@ export default function Home() {
             plan={activePlan}
             onUpdatePlan={handleUpdatePlan}
             onEditForm={handleEditActiveForm}
+            onGoHome={() => setView('landing')}
           />
         )}
       </main>
@@ -287,7 +284,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-border/80 bg-background/50 py-6 text-center text-xs text-muted-foreground no-print mt-auto">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p>© {new Date().getFullYear()} EventCraft. Crafted with pride for Indian Celebrations.</p>
+          <p>© {new Date().getFullYear()} AYOJA. Your Plans. Your People. Your Moments.</p>
           <div className="flex items-center gap-4 text-xs font-medium">
             <button
               onClick={() => {
@@ -320,17 +317,11 @@ export default function Home() {
         }}
       />
 
-      {/* Global VIP Pass & Badge Modal */}
+      {/* Global VIP Pass & Badge Modal (Opens if accessed via direct QR link ?view=pass) */}
       <DigitalPassModal
         plan={activePlan || createSamplePlan('gujarati_wedding')}
         isOpen={isGlobalPassOpen}
         onClose={() => setIsGlobalPassOpen(false)}
-      />
-
-      {/* Challenge 5 Submission Guide & Walkthrough Script Modal */}
-      <SubmissionGuideModal
-        isOpen={isGuideOpen}
-        onClose={() => setIsGuideOpen(false)}
       />
     </div>
   );

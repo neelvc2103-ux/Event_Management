@@ -175,7 +175,7 @@ export function DigitalPassModal({ plan, isOpen, onClose }: DigitalPassModalProp
                   <rect x="72" y="82" width="20" height="8" />
                 </svg>
                 <span className="text-[9px] font-mono font-bold text-slate-600 mt-1 uppercase">
-                  EC-{plan.id.slice(-6).toUpperCase()}
+                  AYOJA-{plan.id.slice(-6).toUpperCase()}
                 </span>
               </div>
             </div>
@@ -212,7 +212,7 @@ export function DigitalPassModal({ plan, isOpen, onClose }: DigitalPassModalProp
             <div className="mt-6 pt-4 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">
               <div className="flex items-center gap-1.5 font-semibold text-emerald-700 dark:text-emerald-400">
                 <ShieldCheck className="w-4 h-4" />
-                <span>Verified by EventCraft System</span>
+                <span>Verified by AYOJA Command Center</span>
               </div>
               <span className="font-medium">Curfew Advisory: 10:00 PM</span>
             </div>

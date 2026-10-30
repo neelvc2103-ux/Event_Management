@@ -43,6 +43,13 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        ayoja: {
+          plum: '#6C1D4F',
+          coral: '#F0656B',
+          gold: '#D4A753',
+          blush: '#F9E8E1',
+          midnight: '#1F1B2E',
+        },
         marigold: {
           50: "#fffbeb",
           100: "#fef3c7",

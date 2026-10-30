@@ -133,12 +133,12 @@ export async function generateFullEventPlan(formData: EventFormData): Promise<LL
       err.message?.includes('API_KEY') ||
       err.message?.includes('apiKey')
     ) {
-      console.warn('[EventCraft] API key not found. Using intelligent Indian domain mock plan generator.');
+      console.warn('[AYOJA] API key not found. Using intelligent Indian domain mock plan generator.');
       return generateMockEventPlan(formData);
     }
 
     // Attempt 2: Retry once with the error message appended
-    console.warn(`[EventCraft] LLM attempt 1 failed (${err.message}). Retrying with error correction...`);
+    console.warn(`[AYOJA] LLM attempt 1 failed (${err.message}). Retrying with error correction...`);
     try {
       const retryPrompt = `${userPrompt}\n\nIMPORTANT: Your previous output had an issue: ${err.message}. Please fix it and output ONLY strictly valid JSON matching the schema with no markdown.`;
       rawResponseText = await executeLlmCall(SYSTEM_PROMPT, retryPrompt);
@@ -151,7 +151,7 @@ export async function generateFullEventPlan(formData: EventFormData): Promise<LL
       }
       parsedJson = validated.data;
     } catch (retryErr: any) {
-      console.error('[EventCraft] LLM generation failed after retry. Falling back to authentic domain template.', retryErr);
+      console.error('[AYOJA] LLM generation failed after retry. Falling back to authentic domain template.', retryErr);
       return generateMockEventPlan(formData);
     }
   }
@@ -241,7 +241,7 @@ export async function regenerateIdeaSection(
     }
     return parsed;
   } catch (err: any) {
-    console.warn('[EventCraft] Regenerate LLM call failed or offline; synthesizing smart alternative.', err.message);
+    console.warn('[AYOJA] Regenerate LLM call failed or offline; synthesizing smart alternative.', err.message);
     // Intelligent fallback for section
     if (section === 'themes') {
       return [
@@ -341,7 +341,7 @@ Respond thoughtfully with helpful, culturally savvy Indian event planning advice
 
     return { reply: cleanReply, updatedPlan };
   } catch (err: any) {
-    console.warn('[EventCraft] Chat Assistant offline or no API key, providing helpful local response.', err.message);
+    console.warn('[AYOJA] Chat Assistant offline or no API key, providing helpful local response.', err.message);
     
     // Provide a smart local response
     const lower = userMessage.toLowerCase();

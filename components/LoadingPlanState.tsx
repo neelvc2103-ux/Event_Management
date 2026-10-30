@@ -30,7 +30,7 @@ export function LoadingPlanState() {
       </div>
 
       <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground">
-        EventCraft AI is planning your celebration
+        AYOJA AI is planning your celebration
       </h2>
 
       <div className="h-10 mt-3 flex items-center justify-center">
