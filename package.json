@@ -1,6 +1,7 @@
 {
-  "name": "eventcraft",
-  "version": "0.1.0",
+  "name": "ayoja",
+  "version": "0.2.0",
+  "description": "AYOJA - Luxury & Precision Indian Event Planning Command Center",
   "private": true,
   "scripts": {
     "dev": "next dev",
