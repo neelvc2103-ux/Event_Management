@@ -1,10 +1,8 @@
 import { EventFormData, EventPlan } from '@/types';
 import { generateMockEventPlan } from './mockPlanGenerator';
 
-const PLANS_STORAGE_KEY = 'ayoja_plans_v1';
-const LEGACY_STORAGE_KEY = 'eventcraft_plans_v1';
-const ACTIVE_PLAN_KEY = 'ayoja_active_plan_id';
-const LEGACY_ACTIVE_KEY = 'eventcraft_active_plan_id';
+const PLANS_STORAGE_KEY = 'eventcraft_plans_v1';
+const ACTIVE_PLAN_KEY = 'eventcraft_active_plan_id';
 
 export const SAMPLE_INPUTS: Record<string, EventFormData> = {
   gujarati_wedding: {
@@ -92,7 +90,7 @@ export function createSamplePlan(sampleKey: keyof typeof SAMPLE_INPUTS): EventPl
 export function getAllPlans(): EventPlan[] {
   if (typeof window === 'undefined') return [];
   try {
-    const raw = localStorage.getItem(PLANS_STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
+    const raw = localStorage.getItem(PLANS_STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
@@ -146,7 +144,7 @@ export function deletePlan(id: string): void {
  */
 export function getActivePlanId(): string | null {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem(ACTIVE_PLAN_KEY) || localStorage.getItem(LEGACY_ACTIVE_KEY);
+  return localStorage.getItem(ACTIVE_PLAN_KEY);
 }
 
 /**

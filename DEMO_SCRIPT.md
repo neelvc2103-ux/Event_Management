@@ -140,4 +140,3 @@ Return to the AYOJA logo or homepage. Hold the final screen for a few seconds.
 AYOJA — Your Plans. Your People. Your Moments.
 
 Thank you!"
-
