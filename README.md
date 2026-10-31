@@ -7,6 +7,10 @@ Repository: [https://github.com/neelvc2103-ux/Event_Management](https://github.c
 
 ---
 
+<p align="center">
+  <img src="public/ayoja-logo.png" alt="AYOJA Brand Identity & Mark" width="360" />
+</p>
+
 ## 🎨 Brand Identity & Visual Language
 
 AYOJA combines luxury editorial aesthetics with high-precision logistical command:
@@ -103,6 +107,20 @@ Server-Side Execution Layer (lib/llmClient.ts)
 * **Strict JSON Mode**: Enforces pure RFC-8259 JSON output without markdown fences.
 * **Tier-Based Pricing Rules**: Calibrates vendor rates against Indian city tiers (Tier 1 metros vs Tier 2/3 towns).
 * **Conversational Patching**: The AI chat assistant outputs conversational guidance alongside an optional `<PLAN_UPDATE>{...}</PLAN_UPDATE>` JSON payload that automatically updates the active plan in state.
+
+---
+
+## 📱 Interactive User Experience & Modules
+
+| Module / Screen | User Workflow & Capabilities |
+| :--- | :--- |
+| **Landing & Cultural Setup** | Interactive brief wizard, regional muhurat presets, and 1-click authentic test scenarios (Gujarati Wedding, Pune Birthday, Mumbai Ganesh Utsav). |
+| **Budget Command Center** | Interactive Recharts donut visualization, exact rupee Largest Remainder distribution, lockable categories, and instant zero-drift slider rebalancing. |
+| **Temporal Execution Timeline** | Zero-past backward calculation engine, dependency tags (e.g., Venue Booking must precede Decor/Catering), and countdown meters. |
+| **Vendor Hub & Quotations** | Regional planning benchmarks, milestone payment tranches (Advance, Mid-Way, Final), and 3-tier indicative quote matrix with hidden-fee audits. |
+| **What-If Trade-Off Simulator**| Live stress-testing for +20% market cost spikes, +50 guest surges, and -15% budget cuts with auto-mitigation strategies. |
+| **Operations & Run-of-Show** | Hour-by-hour day-of checklist, 10 PM police sound curfew flags, duty coordinators, and optional VIP gate pass QR credentials. |
+| **Editorial Handout & WhatsApp** | One-click printable PDF dossier for family elders and venue managers, plus pre-filled WhatsApp RSVP dispatcher. |
 
 ---
 

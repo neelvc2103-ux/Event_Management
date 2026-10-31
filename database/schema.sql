@@ -1,4 +1,4 @@
--- EventCraft Database Schema for Supabase & Vercel Postgres (Neon)
+-- AYOJA Database Schema for Supabase & Vercel Postgres (Neon)
 -- Copy and run this in your Supabase SQL Editor or Vercel Storage Postgres Query Console
 
 CREATE TABLE IF NOT EXISTS event_plans (
